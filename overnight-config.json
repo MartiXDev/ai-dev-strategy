@@ -1,0 +1,141 @@
+{
+  "features": [],
+  "parallelFeatures": false,
+  "parallelTasksEnabled": false,
+  "maxParallelTasks": 2,
+  "parallelTaskGuard": "category-path-matrix",
+  "parallelTaskMatrix": {
+    "BACKEND": {
+      "allowedCategories": [
+        "TEST-UNIT",
+        "DOCS"
+      ],
+      "pathRoots": [
+        "src/Features",
+        "src/Infrastructure",
+        "src/Shared"
+      ]
+    },
+    "FRONTEND": {
+      "allowedCategories": [
+        "TEST-UNIT",
+        "DOCS"
+      ],
+      "pathRoots": [
+        "src/app",
+        "src/components"
+      ]
+    },
+    "TEST-UNIT": {
+      "allowedCategories": [
+        "BACKEND",
+        "FRONTEND"
+      ],
+      "pathRoots": [
+        "tests/Features",
+        "tests/Unit"
+      ]
+    },
+    "DOCS": {
+      "allowedCategories": [
+        "BACKEND",
+        "FRONTEND"
+      ],
+      "pathRoots": [
+        "docs",
+        "README.md"
+      ]
+    },
+    "POWERSHELL": {
+      "allowedCategories": [
+        "TEST-UNIT",
+        "DOCS"
+      ],
+      "pathRoots": [
+        "scripts",
+        "tools",
+        "automation"
+      ]
+    }
+  },
+  "taskBranchesEnabled": false,
+  "taskBranchPrefix": "task/",
+  "taskBranchMergeStrategy": "squash",
+  "taskBranchCleanup": true,
+  "taskTimeoutMinutes": 10,
+  "phaseTimeoutMinutes": 45,
+  "totalBudgetDollars": 5.00,
+  "maxPremiumRequests": 100,
+  "retryOnFailure": true,
+  "retryWithBetterModel": false,
+  "revertOnFailure": false,
+  "worktreeDir": ".worktrees",
+  "logsDir": "logs",
+  "createDraftPR": true,
+  "commitAfterPhase": true,
+  "denyTools": [
+    "shell(rm)",
+    "shell(curl)",
+    "shell(wget)",
+    "shell(git push)"
+  ],
+  "categoryMapping": {
+    "BACKEND": {
+      "agent": ".github/agents/CSharpExpert.agent.md",
+      "overnightModel": "gpt-4.1-mini",
+      "daytimeModel": "claude-sonnet-4-5"
+    },
+    "FRONTEND": {
+      "agent": ".github/agents/expert-react-frontend-engineer.agent.md",
+      "overnightModel": "gpt-4.1-mini",
+      "daytimeModel": "claude-sonnet-4-5"
+    },
+    "FULLSTACK": {
+      "agent": ".github/agents/fullstack-dotnet-react.agent.md",
+      "overnightModel": "gpt-4.1-mini",
+      "daytimeModel": "claude-sonnet-4-5"
+    },
+    "TEST-UNIT": {
+      "agent": ".github/agents/tdd-red.agent.md",
+      "overnightModel": "gpt-4.1-mini",
+      "daytimeModel": "gpt-5"
+    },
+    "TEST-E2E": {
+      "agent": ".github/agents/playwright-tester.agent.md",
+      "overnightModel": "gpt-4.1-mini",
+      "daytimeModel": "gpt-5"
+    },
+    "SECURITY": {
+      "agent": ".github/agents/se-security-reviewer.agent.md",
+      "overnightModel": "claude-sonnet",
+      "daytimeModel": "gpt-5"
+    },
+    "A11Y": {
+      "agent": ".github/agents/accessibility.agent.md",
+      "overnightModel": "gpt-4.1-mini",
+      "daytimeModel": "gpt-5"
+    },
+    "DEVOPS": {
+      "agent": ".github/agents/devops-expert.agent.md",
+      "overnightModel": "gpt-4.1-mini",
+      "daytimeModel": "claude-sonnet-4-5"
+    },
+    "DOCS": {
+      "agent": ".github/agents/se-technical-writer.agent.md",
+      "overnightModel": "gpt-4.1-mini",
+      "daytimeModel": "gpt-4.1"
+    },
+    "POWERSHELL": {
+      "agent": ".github/agents/powershell-expert.agent.md",
+      "overnightModel": "gpt-4.1-mini",
+      "daytimeModel": "claude-sonnet-4-5"
+    }
+  },
+  "modelMultipliers": {
+    "gpt-4.1-mini": 0.25,
+    "gpt-4.1": 1,
+    "gpt-5": 2,
+    "claude-sonnet": 1,
+    "claude-sonnet-4-5": 1
+  }
+}

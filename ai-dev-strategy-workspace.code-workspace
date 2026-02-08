@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../../github/awesome-copilot"
+		},
+		{
+			"path": "../../openai/skills"
+		},
+		{
+			"path": "../../anthropics/skills"
+		},
+		{
+			"path": "../../github/spec-kit"
+		},
+		{
+			"path": "."
+		}
+	]
+}

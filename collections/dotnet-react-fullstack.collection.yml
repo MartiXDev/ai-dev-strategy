@@ -1,0 +1,18 @@
+id: dotnet-react-fullstack
+name: .NET + React Fullstack
+description: Local agents and instructions for the .NET 10 + React 19 fullstack workflow.
+tags: [dotnet, csharp, react, nextjs, fullstack]
+items:
+  - path: .github/agents/fullstack-dotnet-react.agent.md
+    kind: agent
+  - path: .github/agents/overnight-orchestrator.agent.md
+    kind: agent
+  - path: .github/instructions/vertical-slice-dotnet.instructions.md
+    kind: instruction
+  - path: .github/instructions/griffel-fluent-ui.instructions.md
+    kind: instruction
+  - path: .github/instructions/tunit-testing.instructions.md
+    kind: instruction
+display:
+  ordering: alpha
+  show_badge: false
