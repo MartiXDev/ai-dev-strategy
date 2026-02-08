@@ -93,11 +93,14 @@ See [approved-verbs.md](approved-verbs.md) for complete list.
 For focused code transformations on **existing** PowerShell code, see the skills directory:
 
 - [Skills Overview](../skills/README.md) - Introduction to PowerShell transformation skills
-- [module-builder](../skills/module-builder/SKILL.md) - Convert scripts to module structure
-- [pester-test-generator](../skills/pester-test-generator/SKILL.md) - Generate Pester 5.x tests
+- [COMPLIANCE.md](../COMPLIANCE.md) - Agent Skills standard compliance and deployment guide
+- [powershell-module-builder](../skills/powershell-module-builder/SKILL.md) - Convert scripts to module structure
+- [powershell-pester-test-generator](../skills/powershell-pester-test-generator/SKILL.md) - Generate Pester 5.x tests
 - [powershell-modernizer](../skills/powershell-modernizer/SKILL.md) - Upgrade PS 5.1 to PS 7+
-- [pipeline-support-adder](../skills/pipeline-support-adder/SKILL.md) - Add pipeline support to functions
-- [gallery-publisher](../skills/gallery-publisher/SKILL.md) - Publish to PowerShell Gallery
+- [powershell-pipeline-support-adder](../skills/powershell-pipeline-support-adder/SKILL.md) - Add pipeline support to functions
+- [powershell-gallery-publisher](../skills/powershell-gallery-publisher/SKILL.md) - Publish to PowerShell Gallery
+
+**Deployment**: Skills are stored in `custom/PowerShell/skills/` as a central library. Copy to `.github/skills/powershell/` in specific projects as needed. See [COMPLIANCE.md](../COMPLIANCE.md) for deployment workflows.
 
 ## Related Resources
 
@@ -110,3 +113,4 @@ For focused code transformations on **existing** PowerShell code, see the skills
 All documentation is sourced from Microsoft Learn (learn.microsoft.com) and adapted for offline reference.
 
 Last updated: 2026-02-08
+

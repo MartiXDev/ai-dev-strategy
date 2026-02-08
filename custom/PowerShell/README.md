@@ -51,17 +51,24 @@ This system provides **three complementary approaches** to PowerShell developmen
 ```
 
 ### Use PowerShell Skills (Invoke Explicitly)
-✅ **Convert EXISTING scripts to module** → `module-builder`  
-✅ **Add tests to EXISTING functions** → `pester-test-generator`  
+✅ **Convert EXISTING scripts to module** → `powershell-module-builder`  
+✅ **Add tests to EXISTING functions** → `powershell-pester-test-generator`  
 ✅ **Modernize PS 5.1 → PS 7+** → `powershell-modernizer`  
-✅ **Add pipeline to EXISTING function** → `pipeline-support-adder`  
-✅ **Publish to PowerShell Gallery** → `gallery-publisher`  
+✅ **Add pipeline to EXISTING function** → `powershell-pipeline-support-adder`  
+✅ **Publish to PowerShell Gallery** → `powershell-gallery-publisher`  
 
 **How**: Reference the skill when you need focused transformation:
 ```
-Use the module-builder skill to convert my Get-ServerStatus.ps1 script into a proper module
-Use the pester-test-generator skill to add tests for Get-UserReport function
+Use the powershell-module-builder skill to convert my Get-ServerStatus.ps1 script into a proper module
+Use the powershell-pester-test-generator skill to add tests for Get-UserReport function
 ```
+
+**Location**: Skills are stored in `custom/PowerShell/skills/` (central library).  
+**Deployment**: Copy to `.github/skills/powershell/` in specific projects as needed.  
+**Standard**: Fully compliant with [agentskills.io](https://agentskills.io) open standard.
+
+See [Skills README](skills/README.md) for detailed skill documentation.  
+See [COMPLIANCE.md](COMPLIANCE.md) for Agent Skills standard compliance.
 
 See [Skills README](skills/README.md) for detailed skill documentation.
 
@@ -169,15 +176,15 @@ custom/PowerShell/
 ├── README.md                          # This file
 ├── skills/                            # 🆕 Focused transformation skills
 │   ├── README.md                     # Skills overview and usage guide
-│   ├── module-builder/               # Convert scripts → module
+│   ├── powershell-module-builder/               # Convert scripts → module
 │   │   └── SKILL.md
-│   ├── pester-test-generator/        # Add tests to existing functions
+│   ├── powershell-pester-test-generator/        # Add tests to existing functions
 │   │   └── SKILL.md
 │   ├── powershell-modernizer/        # Upgrade PS 5.1 → PS 7+
 │   │   └── SKILL.md
-│   ├── pipeline-support-adder/       # Add pipeline to functions
+│   ├── powershell-pipeline-support-adder/       # Add pipeline to functions
 │   │   └── SKILL.md
-│   └── gallery-publisher/            # Publish to PowerShell Gallery
+│   └── powershell-gallery-publisher/            # Publish to PowerShell Gallery
 │       └── SKILL.md
 ├── docs/                              # Microsoft Learn documentation (offline)
 │   ├── 00-index.md                   # Documentation index
@@ -299,11 +306,11 @@ See [examples/binary-cmdlet/](examples/binary-cmdlet/)
 
 - **v1.1.0** (2026-02-08) - PowerShell Skills added
   - 5 new skills for transforming existing code
-  - module-builder: Convert scripts → modules
-  - pester-test-generator: Add tests to functions
+  - powershell-module-builder: Convert scripts → modules
+  - powershell-pester-test-generator: Add tests to functions
   - powershell-modernizer: Upgrade PS 5.1 → PS 7+
-  - pipeline-support-adder: Add pipeline support
-  - gallery-publisher: Publish to PowerShell Gallery
+  - powershell-pipeline-support-adder: Add pipeline support
+  - powershell-gallery-publisher: Publish to PowerShell Gallery
 
 - **v1.0.0** (2026-02-08) - Initial implementation
   - PowerShell scripting instructions
@@ -333,3 +340,4 @@ This PowerShell expert system is part of the ai-dev-strategy repository. See mai
 - For transforming EXISTING code → Use one of the 5 PowerShell skills
 - For cmdlet development reference → Check `docs/` directory
 - For skill documentation → See `skills/README.md`
+

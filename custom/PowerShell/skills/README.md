@@ -2,6 +2,23 @@
 
 Focused, actionable workflows for transforming **existing** PowerShell code. Each skill is a specialized refactoring tool with step-by-step instructions, examples, and best practices.
 
+**Standard**: Fully compliant with [agentskills.io](https://agentskills.io) open standard.  
+**Format**: SKILL.md with YAML frontmatter (name, description, license).  
+**Portability**: Works across GitHub Copilot (VS Code, CLI, coding agent) and other skills-compatible agents.
+
+### Storage vs Deployment
+
+**Storage Location** (current): `custom/PowerShell/skills/`
+- Central library in ai-dev-strategy repository
+- Source of truth for all PowerShell skills
+- Updated and maintained centrally
+
+**Deployment Locations** (copy as needed):
+- **Project skills**: `.github/skills/powershell/` in your project repository
+- **Personal skills**: `~/.copilot/skills/powershell/` for global availability
+
+See [../COMPLIANCE.md](../COMPLIANCE.md) for full deployment guide and standard compliance details.
+
 ## Overview
 
 **Skills vs Instructions vs Agent:**
@@ -20,7 +37,7 @@ Focused, actionable workflows for transforming **existing** PowerShell code. Eac
 
 ### 🥇 Critical Priority
 
-#### 1. **module-builder**
+#### 1. **powershell-module-builder**
 **Purpose**: Convert standalone scripts into proper module structure  
 **Use when**: You have working `.ps1` scripts and want to package them as a module  
 **What it does**:
@@ -32,14 +49,14 @@ Focused, actionable workflows for transforming **existing** PowerShell code. Eac
 
 **Example**:
 ```
-Use the module-builder skill to convert my Get-AzureReport.ps1 and Set-AzureConfig.ps1 into a module
+Use the powershell-module-builder skill to convert my Get-AzureReport.ps1 and Set-AzureConfig.ps1 into a module
 ```
 
-[Read full documentation →](module-builder/SKILL.md)
+[Read full documentation →](powershell-module-builder/SKILL.md)
 
 ---
 
-#### 2. **pester-test-generator**
+#### 2. **powershell-pester-test-generator**
 **Purpose**: Generate comprehensive Pester 5.x tests for existing functions  
 **Use when**: Functions lack tests, need safety net before refactoring, TDD retrofit  
 **What it does**:
@@ -54,10 +71,10 @@ Use the module-builder skill to convert my Get-AzureReport.ps1 and Set-AzureConf
 
 **Example**:
 ```
-Use the pester-test-generator skill to add tests for my Get-UserReport function
+Use the powershell-pester-test-generator skill to add tests for my Get-UserReport function
 ```
 
-[Read full documentation →](pester-test-generator/SKILL.md)
+[Read full documentation →](powershell-pester-test-generator/SKILL.md)
 
 ---
 
@@ -85,7 +102,7 @@ Use the powershell-modernizer skill to upgrade this legacy script to PowerShell 
 
 ### 🏅 Medium Priority
 
-#### 4. **pipeline-support-adder**
+#### 4. **powershell-pipeline-support-adder**
 **Purpose**: Add pipeline capabilities to existing functions  
 **Use when**: Function works but doesn't support pipeline input  
 **What it does**:
@@ -97,14 +114,14 @@ Use the powershell-modernizer skill to upgrade this legacy script to PowerShell 
 
 **Example**:
 ```
-Use the pipeline-support-adder skill to make my Get-UserData function pipeline-aware
+Use the powershell-pipeline-support-adder skill to make my Get-UserData function pipeline-aware
 ```
 
-[Read full documentation →](pipeline-support-adder/SKILL.md)
+[Read full documentation →](powershell-pipeline-support-adder/SKILL.md)
 
 ---
 
-#### 5. **gallery-publisher**
+#### 5. **powershell-gallery-publisher**
 **Purpose**: Prepare and publish modules to PowerShell Gallery  
 **Use when**: Ready to publish module publicly or to private gallery  
 **What it does**:
@@ -117,10 +134,10 @@ Use the pipeline-support-adder skill to make my Get-UserData function pipeline-a
 
 **Example**:
 ```
-Use the gallery-publisher skill to publish my AzureTools module to PowerShell Gallery
+Use the powershell-gallery-publisher skill to publish my AzureTools module to PowerShell Gallery
 ```
 
-[Read full documentation →](gallery-publisher/SKILL.md)
+[Read full documentation →](powershell-gallery-publisher/SKILL.md)
 
 ---
 
@@ -128,19 +145,19 @@ Use the gallery-publisher skill to publish my AzureTools module to PowerShell Ga
 
 ### Option 1: Reference Skill Directly
 ```
-Use the module-builder skill to convert my scripts into a module
+Use the powershell-module-builder skill to convert my scripts into a module
 ```
 
 ### Option 2: Read and Follow Manually
 Open the SKILL.md file and follow the step-by-step workflow:
 ```powershell
-Get-Content .\custom\PowerShell\skills\module-builder\SKILL.md
+Get-Content .\custom\PowerShell\skills\powershell-module-builder\SKILL.md
 ```
 
 ### Option 3: Invoke with Context
 ```
 I have three scripts (Get-Data.ps1, Set-Config.ps1, Remove-Cache.ps1) that I want to package as a module.
-Use the module-builder skill to help me create proper module structure.
+Use the powershell-module-builder skill to help me create proper module structure.
 ```
 
 ## Decision Tree: Which Skill?
@@ -149,11 +166,11 @@ Use the module-builder skill to help me create proper module structure.
 I want to... → What do I need?
 
 Transform existing code:
-├─ Scripts → Module → **module-builder**
-├─ No tests → Add tests → **pester-test-generator**
+├─ Scripts → Module → **powershell-module-builder**
+├─ No tests → Add tests → **powershell-pester-test-generator**
 ├─ PS 5.1 → PS 7+ → **powershell-modernizer**
-├─ No pipeline → Add pipeline → **pipeline-support-adder**
-└─ Local → Gallery → **gallery-publisher**
+├─ No pipeline → Add pipeline → **powershell-pipeline-support-adder**
+└─ Local → Gallery → **powershell-gallery-publisher**
 
 Write new code:
 └─ Use PowerShell Instructions (automatic)
@@ -210,24 +227,24 @@ When creating new skills:
 
 ### Workflow 1: Script → Gallery
 ```
-1. module-builder → Convert scripts to module
-2. pester-test-generator → Add tests
+1. powershell-module-builder → Convert scripts to module
+2. powershell-pester-test-generator → Add tests
 3. powershell-modernizer → Modernize syntax (if legacy)
-4. gallery-publisher → Publish to PowerShell Gallery
+4. powershell-gallery-publisher → Publish to PowerShell Gallery
 ```
 
 ### Workflow 2: Legacy Modernization
 ```
 1. powershell-modernizer → Upgrade PS 5.1 → PS 7+
-2. pipeline-support-adder → Add pipeline support
-3. pester-test-generator → Add tests for safety
+2. powershell-pipeline-support-adder → Add pipeline support
+3. powershell-pester-test-generator → Add tests for safety
 ```
 
 ### Workflow 3: Function Enhancement
 ```
-1. pipeline-support-adder → Add pipeline support
-2. pester-test-generator → Test pipeline scenarios
-3. (Optional) gallery-publisher → Share with community
+1. powershell-pipeline-support-adder → Add pipeline support
+2. powershell-pester-test-generator → Test pipeline scenarios
+3. (Optional) powershell-gallery-publisher → Share with community
 ```
 
 ## Frequently Asked Questions
@@ -236,7 +253,7 @@ When creating new skills:
 **A**: Use skills for focused transformations on existing code. Use the agent for designing new modules from scratch.
 
 ### Q: Can I combine multiple skills?
-**A**: Yes! Skills are designed to be composable. Example: Use `module-builder` then `pester-test-generator` then `gallery-publisher`.
+**A**: Yes! Skills are designed to be composable. Example: Use `powershell-module-builder` then `powershell-pester-test-generator` then `powershell-gallery-publisher`.
 
 ### Q: Do skills modify my code automatically?
 **A**: No. Skills provide step-by-step instructions and examples. You execute the changes yourself with full control.
@@ -266,8 +283,9 @@ When creating new skills:
 ---
 
 **Quick Reference**:
-- 🥇 **module-builder** - Scripts → Module structure
-- 🥇 **pester-test-generator** - Add Pester 5.x tests
+- 🥇 **powershell-module-builder** - Scripts → Module structure
+- 🥇 **powershell-pester-test-generator** - Add Pester 5.x tests
 - 🥉 **powershell-modernizer** - PS 5.1 → PS 7+
-- 🏅 **pipeline-support-adder** - Add pipeline support
-- 🏅 **gallery-publisher** - Publish to Gallery
+- 🏅 **powershell-pipeline-support-adder** - Add pipeline support
+- 🏅 **powershell-gallery-publisher** - Publish to Gallery
+

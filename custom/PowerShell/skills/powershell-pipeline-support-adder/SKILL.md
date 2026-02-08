@@ -1,9 +1,10 @@
 ---
-name: pipeline-support-adder
-description: Add pipeline capabilities to existing PowerShell functions. Refactors functions to accept ValueFromPipeline or ValueFromPipelineByPropertyName, implements begin/process/end blocks, and adds proper pipeline handling patterns.
+name: powershell-pipeline-support-adder
+description: Add pipeline capabilities to existing PowerShell functions by adding ValueFromPipeline, ValueFromPipelineByPropertyName, and refactoring into begin/process/end blocks with proper pipeline handling. Use this when asked to make functions pipeline-aware, add pipeline support, enable piping to functions, or support pipeline input.
+license: MIT
 ---
 
-# Pipeline Support Adder
+# PowerShell Pipeline Support Adder (powershell-pipeline-support-adder)
 
 Transform existing PowerShell functions to support pipeline input by adding `ValueFromPipeline`, `ValueFromPipelineByPropertyName`, and refactoring into `begin/process/end` blocks.
 
@@ -625,7 +626,7 @@ After adding pipeline support:
 
 ## Next Steps
 
-1. **Add Pester tests**: Use `pester-test-generator` skill to test pipeline scenarios
+1. **Add Pester tests**: Use `powershell-pester-test-generator` skill to test pipeline scenarios
 2. **Update help**: Add `.PARAMETER` help for pipeline attributes
 3. **Add examples**: Show both parameter and pipeline usage in comment-based help
 4. **Consider performance**: For large datasets, test streaming vs batch processing
@@ -638,3 +639,4 @@ After adding pipeline support:
 - Processing blocks: `Get-Help about_Functions_Advanced_Methods`
 - Best practices: `.github/instructions/powershell-scripting.instructions.md`
 - Expert guidance: `.github/agents/powershell-expert.agent.md`
+

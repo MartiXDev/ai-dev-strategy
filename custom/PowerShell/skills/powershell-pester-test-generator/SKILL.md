@@ -1,9 +1,10 @@
 ---
-name: pester-test-generator
-description: Generate comprehensive Pester 5.x tests for existing PowerShell functions. Creates test files with BeforeAll, Describe, Context, It blocks, parameter validation, pipeline scenarios, and edge cases.
+name: powershell-pester-test-generator
+description: Generate comprehensive Pester 5.x tests for existing PowerShell functions with BeforeAll, Describe, Context, It blocks, parameter validation, pipeline scenarios, and edge cases. Use this when asked to add tests, create Pester tests, retrofit testing, write unit tests for PowerShell, or generate test coverage.
+license: MIT
 ---
 
-# Pester Test Generator
+# PowerShell Pester Test Generator (powershell-pester-test-generator)
 
 Automatically generate Pester 5.x test files for existing PowerShell functions with comprehensive coverage of happy paths, error cases, pipeline scenarios, and edge cases.
 

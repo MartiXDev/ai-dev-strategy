@@ -1,9 +1,10 @@
 ---
-name: gallery-publisher
-description: Prepare and publish PowerShell modules to PowerShell Gallery. Validates manifest, runs PSScriptAnalyzer, manages API keys, handles versioning, and executes publish workflow with verification.
+name: powershell-gallery-publisher
+description: Prepare and publish PowerShell modules to PowerShell Gallery with validation, PSScriptAnalyzer, API key management, versioning, and publish workflow. Use this when asked to publish to Gallery, share a module, deploy to PSGallery, make a module public, or distribute PowerShell modules.
+license: MIT
 ---
 
-# PowerShell Gallery Publisher
+# PowerShell Gallery Publisher (powershell-gallery-publisher)
 
 Complete workflow for preparing, validating, and publishing PowerShell modules to the PowerShell Gallery (or private galleries).
 

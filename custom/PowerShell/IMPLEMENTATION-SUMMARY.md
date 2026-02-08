@@ -48,11 +48,11 @@ Successfully created a comprehensive AI-powered system for creating and editing 
 
 Five specialized skills for transforming **existing** PowerShell code:
 
-1. **module-builder** (10,905 chars)
+1. **powershell-module-builder** (10,905 chars)
    - Convert standalone scripts to module structure
    - Creates manifest, organizes Public/Private, validates
    
-2. **pester-test-generator** (17,356 chars)
+2. **powershell-pester-test-generator** (17,356 chars)
    - Generate comprehensive Pester 5.x tests
    - Parameter validation, happy paths, pipeline, edge cases
    
@@ -60,11 +60,11 @@ Five specialized skills for transforming **existing** PowerShell code:
    - Upgrade PowerShell 5.1 → PowerShell 7+
    - Ternary operators, null coalescing, pipeline chains, -Parallel
    
-4. **pipeline-support-adder** (16,993 chars)
+4. **powershell-pipeline-support-adder** (16,993 chars)
    - Add pipeline capabilities to existing functions
    - ValueFromPipeline, begin/process/end blocks
    
-5. **gallery-publisher** (19,011 chars)
+5. **powershell-gallery-publisher** (19,011 chars)
    - Complete workflow for publishing to PowerShell Gallery
    - Validation, API keys, versioning, publishing, verification
 
@@ -204,11 +204,11 @@ Added parallel task matrix entry:
 ✅ Advanced cmdlet design patterns  
 
 ### 🆕 Transformation Skills (via Focused Skills)
-✅ **module-builder**: Convert scripts → module structure  
-✅ **pester-test-generator**: Add Pester 5.x tests to existing functions  
+✅ **powershell-module-builder**: Convert scripts → module structure  
+✅ **powershell-pester-test-generator**: Add Pester 5.x tests to existing functions  
 ✅ **powershell-modernizer**: Upgrade PS 5.1 → PS 7+ syntax  
-✅ **pipeline-support-adder**: Add pipeline support to functions  
-✅ **gallery-publisher**: Publish to PowerShell Gallery  
+✅ **powershell-pipeline-support-adder**: Add pipeline support to functions  
+✅ **powershell-gallery-publisher**: Publish to PowerShell Gallery  
 
 ---
 
@@ -241,8 +241,8 @@ Invoke the PowerShell Expert agent:
 Reference the appropriate skill:
 
 ```
-Use the module-builder skill to convert my Get-ServerStatus.ps1 script into a module
-Use the pester-test-generator skill to add tests for Get-UserReport
+Use the powershell-module-builder skill to convert my Get-ServerStatus.ps1 script into a module
+Use the powershell-pester-test-generator skill to add tests for Get-UserReport
 Use the powershell-modernizer skill to upgrade this PS 5.1 script to PS 7+
 ```
 
@@ -288,11 +288,11 @@ custom/PowerShell/
 ├── test-scenarios.md                  # Validation tests
 ├── skills/                            # 🆕 Transformation skills
 │   ├── README.md                     # Skills overview
-│   ├── module-builder/
-│   ├── pester-test-generator/
+│   ├── powershell-module-builder/
+│   ├── powershell-pester-test-generator/
 │   ├── powershell-modernizer/
-│   ├── pipeline-support-adder/
-│   └── gallery-publisher/
+│   ├── powershell-pipeline-support-adder/
+│   └── powershell-gallery-publisher/
 ├── docs/                              # Microsoft Learn docs (offline)
 │   ├── 00-index.md
 │   ├── implementation-plan.md
@@ -391,3 +391,4 @@ You can now:
 3. **Skills** (explicit) - Transform EXISTING code
 
 **Happy PowerShell scripting! 🚀**
+

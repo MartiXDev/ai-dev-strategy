@@ -1,9 +1,10 @@
 ---
-name: module-builder
-description: Convert standalone PowerShell scripts into proper module structure with manifest, organized folders, and export management. Use when packaging scripts for distribution or creating organized module structure.
+name: powershell-module-builder
+description: Convert standalone PowerShell scripts into proper module structure with manifest, organized folders, and export management. Use this when asked to package scripts, create a module, organize PowerShell functions for distribution, or prepare for PowerShell Gallery publication.
+license: MIT
 ---
 
-# PowerShell Module Builder
+# PowerShell Module Builder (powershell-module-builder)
 
 Transform standalone `.ps1` scripts into production-ready PowerShell modules with proper structure, manifest, and organization.
 
@@ -387,10 +388,10 @@ Invoke-ScriptAnalyzer -Path ".\MyModule" -Recurse
 
 ## Next Steps After Module Creation
 
-1. **Add Pester Tests** - Use `pester-test-generator` skill
+1. **Add Pester Tests** - Use `powershell-pester-test-generator` skill
 2. **Run PSScriptAnalyzer** - Ensure code quality
 3. **Create Help** - Add comment-based help to all public functions
-4. **Publish to Gallery** - Use `gallery-publisher` skill
+4. **Publish to Gallery** - Use `powershell-gallery-publisher` skill
 5. **Set up CI/CD** - Automate testing and publishing
 
 ## Reference
@@ -399,3 +400,4 @@ Invoke-ScriptAnalyzer -Path ".\MyModule" -Recurse
 - Module structure: `Get-Help about_Modules`
 - Best practices: `.github/instructions/powershell-scripting.instructions.md`
 - Expert guidance: `.github/agents/powershell-expert.agent.md`
+

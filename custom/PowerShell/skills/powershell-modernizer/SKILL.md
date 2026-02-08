@@ -1,9 +1,10 @@
 ---
 name: powershell-modernizer
-description: Upgrade PowerShell 5.1 legacy code to PowerShell 7+ modern syntax. Converts if/else to ternary, null checks to null coalescing, adds pipeline chains, ForEach-Object -Parallel, and cross-platform patterns.
+description: Upgrade PowerShell 5.1 legacy code to PowerShell 7+ modern syntax with ternary operators, null coalescing, pipeline chains, and ForEach-Object -Parallel. Use this when asked to modernize scripts, upgrade to PS 7, convert legacy PowerShell, migrate from Windows PowerShell, or use new PowerShell features.
+license: MIT
 ---
 
-# PowerShell Modernizer
+# PowerShell Modernizer (powershell-modernizer)
 
 Transform legacy PowerShell 5.1 code to modern PowerShell 7+ syntax with ternary operators, null coalescing, pipeline chains, parallel execution, and cross-platform compatibility.
 
@@ -513,7 +514,7 @@ After modernization, verify:
 ## Next Steps
 
 1. **Test thoroughly**: Run against original test cases
-2. **Add Pester tests**: Use `pester-test-generator` skill
+2. **Add Pester tests**: Use `powershell-pester-test-generator` skill
 3. **Run analyzer**: `Invoke-ScriptAnalyzer -Path .\ModernScript.ps1`
 4. **Document changes**: Add comments explaining modern syntax for team
 5. **Deploy gradually**: Test in dev → staging → production
@@ -527,3 +528,4 @@ After modernization, verify:
 - Parallel: `Get-Help ForEach-Object -Parameter Parallel`
 - Cross-platform: `Get-Help about_Automatic_Variables`
 - Best practices: `.github/instructions/powershell-scripting.instructions.md`
+
