@@ -1,0 +1,28 @@
+{
+  "profiles": {
+    "baseline": {
+      "name": "Baseline",
+      "description": "Standard benchmark profile for general API generation and quality/performance comparison.",
+      "requirementPacks": [
+        "requirements\\01-expected-output-structure.md"
+      ],
+      "externalAssets": []
+    },
+    "overnight-spec-driven": {
+      "name": "Overnight Spec-Driven",
+      "description": "Simulates day-time planning and overnight implementation using specs, tasks, and reusable skills/agents.",
+      "requirementPacks": [
+        "requirements\\01-expected-output-structure.md",
+        "requirements\\02-spec-driven-overnight-workflow.md",
+        "requirements\\03-martix-webapi-patterns.md"
+      ],
+      "externalAssets": [
+        "awesome-copilot",
+        "openai-skills",
+        "anthropic-skills",
+        "spec-kit",
+        "martix-webapi-summary"
+      ]
+    }
+  }
+}

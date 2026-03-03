@@ -1,0 +1,22 @@
+{
+  "name": "dotnet-frontend-ui",
+  "description": "React + Fluent UI v9 + Griffel guidance for accessible, consistent frontend component development in .NET solutions.",
+  "version": "1.0.0",
+  "author": {
+    "name": "MartiXDev Community"
+  },
+  "repository": "https://github.com/MartiXDev/ai-dev-strategy",
+  "license": "MIT",
+  "keywords": [
+    "dotnet",
+    "react",
+    "fluentui",
+    "griffel",
+    "accessibility",
+    "frontend",
+    "ui-consistency"
+  ],
+  "skills": [
+    "./skills/dotnet-frontend-ui"
+  ]
+}

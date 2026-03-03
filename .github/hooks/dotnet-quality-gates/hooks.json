@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "pwsh -NoProfile -File ./on-session-start.ps1",
+        "powershell": "./on-session-start.ps1",
+        "cwd": ".github/hooks/dotnet-quality-gates",
+        "timeoutSec": 30
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "type": "command",
+        "bash": "pwsh -NoProfile -File ./on-user-prompt.ps1",
+        "powershell": "./on-user-prompt.ps1",
+        "cwd": ".github/hooks/dotnet-quality-gates",
+        "timeoutSec": 30
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "pwsh -NoProfile -File ./on-session-end.ps1",
+        "powershell": "./on-session-end.ps1",
+        "cwd": ".github/hooks/dotnet-quality-gates",
+        "timeoutSec": 300
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "llmName": "",
+  "llmModel": "",
+  "category": "",
+  "testPromptId": "",
+  "benchmarkProfile": "",
+  "cliType": "",
+  "startTime": "",
+  "endTime": "",
+  "durationSeconds": 0,
+  "requestCount": 1,
+  "totalCost": 0,
+  "responseCompleteness": "complete|partial|truncated|failed|error",
+  "rawOutputLength": 0,
+  "extractedCodeLength": 0,
+  "codeQuality": {
+    "compilable": null,
+    "followsBestPractices": null,
+    "hasProperErrorHandling": null,
+    "hasDocumentation": null,
+    "usesModernFeatures": null,
+    "overallScore": null
+  },
+  "performanceMetrics": {
+    "timeToFirstToken": null,
+    "tokensPerSecond": null,
+    "totalTokensEstimate": null
+  },
+  "strategyAlignment": {
+    "hasSpecArtifacts": null,
+    "followsExpectedStructure": null,
+    "reusesMartixPatterns": null,
+    "planningImplementationContinuity": null,
+    "referencesSkillsOrAgents": null,
+    "overallScore": null
+  },
+  "errorDetails": null,
+  "observations": ""
+}

@@ -1,0 +1,23 @@
+{
+  "name": "dotnet-api-quality",
+  "description": "Improve modern ASP.NET Core API quality with strong validation, ProblemDetails, OpenAPI documentation, consistent error handling, and response conventions.",
+  "version": "1.0.0",
+  "author": {
+    "name": "MartiXDev Community"
+  },
+  "repository": "https://github.com/MartiXDev/ai-dev-strategy",
+  "license": "MIT",
+  "keywords": [
+    "dotnet",
+    "aspnet",
+    "api",
+    "validation",
+    "problem-details",
+    "openapi",
+    "error-handling",
+    "consistency"
+  ],
+  "skills": [
+    "./skills/dotnet-api-quality"
+  ]
+}

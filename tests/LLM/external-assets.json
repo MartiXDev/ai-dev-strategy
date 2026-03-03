@@ -1,0 +1,39 @@
+{
+  "assets": [
+    {
+      "id": "awesome-copilot",
+      "name": "Awesome Copilot",
+      "path": "C:\\Git\\github\\awesome-copilot",
+      "kind": "agents-prompts-instructions-skills",
+      "notes": "Curated GitHub Copilot ecosystem resources."
+    },
+    {
+      "id": "openai-skills",
+      "name": "OpenAI Skills",
+      "path": "C:\\Git\\openai\\skills",
+      "kind": "skills",
+      "notes": "Codex-compatible reusable skills."
+    },
+    {
+      "id": "anthropic-skills",
+      "name": "Anthropic Skills",
+      "path": "C:\\Git\\anthropics\\skills",
+      "kind": "skills",
+      "notes": "Claude-focused skill packs and examples."
+    },
+    {
+      "id": "spec-kit",
+      "name": "GitHub Spec Kit",
+      "path": "C:\\Git\\github\\spec-kit",
+      "kind": "spec-driven-workflow",
+      "notes": "Constitution/spec/plan/tasks implementation flow."
+    },
+    {
+      "id": "martix-webapi-summary",
+      "name": "MartiX.WebApi Summary",
+      "path": "C:\\Git\\MartiXDev\\WebApi\\src\\PROGRAMMER_SUMMARY.md",
+      "kind": "shared-library-guidance",
+      "notes": "Reusable patterns such as Guards, Results, Specifications, SmartEnums, SharedKernel."
+    }
+  ]
+}

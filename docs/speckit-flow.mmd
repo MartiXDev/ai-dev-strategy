@@ -1,0 +1,82 @@
+flowchart TB
+  subgraph Human["`🧑 **Human** Actions`"]
+    Constitution["`**0A**
+      **Constitution** Initiate **/constitution** Specify the non negotiables. This is a project level file referenced when needed throughout feature cycle.`"]
+    RVConst["`**Review & Verify**
+      Critique generated **constitution.md**`"]
+    RefineConst{"`Refine
+      ?`"}
+    Specify["`1A
+      **Define Feature Idea**
+      Initiate **/specify** with **what to build**
+      _* I use my PRD as input_`"]
+    RVSpec["`**Review & Verify**
+      Critique generated **spec.md**`"]
+    RefineSpec{"`Refine
+      ?`"}
+    Clarify["`Clarity
+      ?`"]
+    ClarifySpec["`**Clarify spec**
+      Initiate using **/clarify**`"]
+    RVPlan["`**Review & Verify**
+      Critique generated **plan.md**`"]
+    RefinePlan{"`Refine
+      ?`"}
+
+  end
+
+  subgraph Files["🗎 Files Created"]
+    FileConst["`🗎 Core file
+      **constitution.md**`"]
+    FileSpec["`🗎 Core file
+      **spec.md**`"]
+    FilePlan["`🗎 Core file
+      **plan.md**`"]
+  
+  end
+
+  subgraph AI["𐓙 AI Actions"]
+    CreateConstitution["`**0B**
+      Create **constitution.md**
+      with project governing principles & development guidelines.
+      This is a project level file saved in the **.specify/memory** folder`"]
+    CreateSpec["`**1B**
+      Create **spec.md**
+      with requirements and user stories`"]
+    RunClarify["`**1C**
+      **Run Clarify**
+      Improve clarity on ambiguous items`"]
+    CreatePlan["`**2B**
+      Create **plan.md**
+      with implementation plans & tech stack`"]
+  end
+
+  Constitution --> CreateConstitution
+  CreateConstitution --> FileConst
+  FileConst --> RVConst
+  RVConst --> RefineConst
+  RefineConst --> CreateConstitution
+  RefineConst --> Specify
+  Specify --> CreateSpec
+  CreateSpec --> FileSpec
+  FileSpec --> RVSpec
+  RVSpec --> RefineSpec
+  RefineSpec --> Clarify
+  Clarify --> FileSpec
+  Clarify --> ClarifySpec
+  ClarifySpec --> RunClarify
+  RunClarify --> FileSpec
+  
+
+  %% Styling for Human Lane (Blue theme)
+  classDef humanLaneStyle fill:#E3F2FD,color:#000
+  class Human humanLaneStyle
+
+  %% Styling for Human Lane (Yellow theme)
+  classDef filesLaneStyle fill:#F3F2ED,color:#000
+  class Files filesLaneStyle
+
+  %% Styling for Human Lane (Orange theme)
+  classDef aiLaneStyle fill:#FFF3E0,color:#000
+  class AI aiLaneStyle
+

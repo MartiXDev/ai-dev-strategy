@@ -1,0 +1,217 @@
+# MartiX DotNet AI Skills
+
+Source-of-truth document for building a plugin-first AI customization stack for modern .NET APIs and web applications.
+
+## Scope guardrails
+
+- Use this file as the primary source of truth for execution.
+- Ignore existing repository experiments as architectural input.
+- Use a plugin-first approach (collections are intentionally excluded).
+- Prioritize quality, consistency, security, and cost-aware model usage.
+
+## Information sources
+
+### AI Knowledge
+
+Instructions:
+
+- Explore all pages and subpages under the listed URLs.
+- Focus on custom agents, plugins, skills, prompts, instructions, hooks, and MCP integration.
+
+Link URLs:
+
+- <https://code.visualstudio.com/docs/copilot/customization/overview>
+- <https://docs.github.com/en/copilot/concepts>
+- <https://docs.github.com/en/copilot/concepts/agents/about-agent-skills>
+- <https://docs.github.com/en/copilot/get-started>
+- <https://docs.github.com/en/copilot/how-tos>
+- <https://docs.github.com/en/copilot/reference>
+- <https://docs.github.com/en/copilot/reference/customization-cheat-sheet>
+- <https://github.blog/changelog/2025-12-18-github-copilot-now-supports-agent-skills/>
+
+### DotNet Knowledge
+
+Instructions:
+
+- Explore all pages and subpages under the listed URLs.
+- Explore "What's new" for .NET 8/9 for context, but prefer .NET 10+ for decisions.
+- Focus on secure, performant, clean, modern implementation guidance.
+
+Link URLs:
+
+- <https://learn.microsoft.com/en-us/aspnet/core>
+- <https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices>
+- <https://learn.microsoft.com/en-us/aspnet/core/overview>
+- <https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-10.0>
+- <https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-8.0>
+- <https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-9.0>
+- <https://learn.microsoft.com/en-us/dotnet/architecture>
+- <https://learn.microsoft.com/en-us/dotnet/core>
+- <https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/overview>
+- <https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8/overview>
+- <https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-9/overview>
+- <https://learn.microsoft.com/en-us/dotnet/fundamentals>
+
+### Existing skills/plugin libraries for comparison
+
+Link URLs:
+
+- <https://skills.sh>
+- <https://github.com/github/awesome-copilot>
+- <https://github.com/anthropics/skills>
+- <https://github.com/openai/skills>
+- <https://skills.sh/aaronontheweb/dotnet-skills>
+- <https://skills.sh/mhagrelius/dotfiles/dotnet-10-csharp-14>
+
+## Goal
+
+### Prepare the best AI customizations for modern .NET web app development
+
+## Processed task backlog (improved and dependency-aware)
+
+| ID | Objective | Deliverable | Depends On |
+| --- | --- | --- | --- |
+| T00 | Refine task list and execution prompts | Explicit task prompts, dependencies, acceptance criteria | - |
+| T01 | Deep review AI customization sources | AI customization findings summary with references | T00 |
+| T02 | Deep review .NET sources | .NET 10+ findings summary with references | T00 |
+| T03 | Benchmark skill/plugin ecosystems | Comparison matrix and pattern extraction | T00 |
+| T04 | Design customization architecture | Plugin-first architecture for agents/plugins/skills/prompts/instructions/hooks | T01,T02,T03 |
+| T05 | Minimize context and define fleet usage | Focused-tool, scoped-context, and subagent/fleet strategy | T04 |
+| T06 | Route models for quality/cost balance | Model tiering and budget policy by task type | T04 |
+| T07 | Define configuration strategy | Practical configuration standards and guardrails | T05,T06 |
+| T08 | New-project adoption guidance | Step-by-step bootstrap guide | T07 |
+| T09 | Multi-repo sharing strategy | Packaging, versioning, and rollout strategy | T07 |
+| T10 | Validation and quality metrics | KPI and quality gate checklist | T08,T09 |
+
+## Research evidence schema
+
+Use this schema for every source reviewed:
+
+- `source_url`
+- `source_type` (official docs, changelog, ecosystem repo, community index)
+- `key_findings`
+- `implementation_impact`
+- `confidence` (high/medium/low)
+- `notes`
+
+## Synthesized findings
+
+### AI customization findings (from official docs/changelog)
+
+- Copilot customization surfaces are now clearly separated: custom instructions, prompt files, custom agents, subagents, agent skills, hooks, and MCP servers.
+- Agent skills are an open standard and are loaded dynamically when relevant to the task.
+- Plugins are installable bundles of related resources (agents/skills/tooling patterns) and are now the preferred packaging concept over collections.
+- Hooks enable deterministic quality and policy enforcement at lifecycle points.
+- MCP is the preferred integration model for external systems and tools.
+
+### .NET findings (quality/performance/security focus)
+
+- .NET 10 is an LTS release and should be the default target for new strategy decisions.
+- Runtime and library improvements emphasize performance and modern API capabilities (JIT, NativeAOT, JSON strictness, cryptography, networking updates).
+- ASP.NET Core best practices strongly reinforce fully async flows, avoiding blocking calls, aggressive caching where valid, query/data-shape optimization, and resilient outbound HTTP via `HttpClientFactory`.
+- ASP.NET Core 10 highlights include continued platform improvements (including minimal API and OpenAPI enhancements called out at the release overview level).
+
+### Skills/plugin ecosystem findings
+
+- `github/awesome-copilot` demonstrates a plugin-first marketplace model with installable plugin packages and strong discoverability.
+- `anthropics/skills` demonstrates robust skill packaging patterns (`SKILL.md`, examples, scripts/resources) and plugin marketplace workflows.
+- `openai/skills` emphasizes installable skill tiers and repeatable, discoverable capability packaging.
+- `skills.sh` demonstrates large-scale skill discoverability, including mature .NET-focused skill catalogs (`aaronontheweb/dotnet-skills`).
+
+## Plugin-first customization blueprint
+
+### Architecture layers
+
+1. **Instructions layer**: always-on standards and path-specific rules.
+2. **Prompt layer**: reusable slash-command workflows for bounded tasks.
+3. **Agent layer**: focused personas with explicit tool boundaries.
+4. **Skill layer**: reusable capability bundles for repeatable workflows.
+5. **Plugin layer**: installable curated bundles by domain.
+6. **Hook layer**: deterministic policy, quality gates, and audit events.
+7. **MCP layer**: external tool/data integration with explicit contracts.
+
+### Recommended plugin packages (initial set)
+
+- `dotnet-api-quality`: API design, validation, error handling, OpenAPI, security.
+- `dotnet-testing-quality`: TUnit patterns, integration tests, regression gates.
+- `dotnet-performance`: async/data-access/perf diagnostics and anti-pattern checks.
+- `dotnet-frontend-ui`: React/Fluent UI/Griffel conventions for fullstack teams.
+- `dotnet-devops-release`: CI hooks, release workflows, deployment safety checks.
+
+## Focused agents and model routing strategy
+
+| Work Type | Agent profile | Model tier | Cost policy |
+| --- | --- | --- | --- |
+| Planning/architecture | Architect/Planner | Premium | Use premium only for non-trivial design decisions |
+| Backend implementation | C# expert | Standard | Default path for most coding tasks |
+| Frontend implementation | React/UI expert | Standard | Use premium only for complex refactors |
+| Unit/integration testing | Test specialist | Fast/standard | Prefer fast for generation, standard for diagnosis |
+| Security review | Security specialist | Premium | Always premium for high-risk analysis |
+| Documentation/guidance | Technical writer | Fast/standard | Prefer fast with deterministic templates |
+
+## Context-window minimization and fleet strategy
+
+- Keep each task prompt single-purpose and bounded by file/path scope.
+- Prefer skills/plugins that inject only relevant resources for the current task.
+- Use subagents/fleet for parallel independent workstreams (research vs implementation vs docs).
+- Enforce path hints and scoped context loading to avoid broad repository reads.
+- Require post-task verification gates before merging outputs into shared artifacts.
+
+## Configuration strategy recommendations
+
+- Define strict defaults: least-privilege tools, explicit allowlists, no broad fallback behavior.
+- Separate policy from behavior:
+  - policy: hooks/instructions
+  - behavior: agents/prompts/skills/plugins
+- Encode quality gates in hooks (format/lint/build/test/security checks).
+- Version all plugin and skill artifacts semantically and pin versions in consuming repos.
+
+## New project adoption guide
+
+1. Initialize with base instructions and project context.
+2. Add path-specific instruction packs for backend/frontend/tests/docs.
+3. Install core plugin set (`api-quality`, `testing-quality`, `performance`).
+4. Enable focused agents per team workflow.
+5. Configure hooks for build/test/security gates.
+6. Configure MCP integrations needed by the project.
+7. Apply model routing defaults (premium for planning/security, lower tiers for routine coding).
+8. Start with small-scope prompts and skill-driven tasks.
+9. Validate against quality metrics before scaling automation.
+
+## Cross-repository sharing strategy
+
+- Maintain a central plugin/skill source repository with release tags.
+- Publish versioned plugin bundles and a compatibility matrix.
+- Use semantic versioning:
+  - major = breaking behavior/policy changes
+  - minor = new capabilities
+  - patch = fixes and docs
+- Define rollout channels:
+  - `stable` (default), `candidate`, `experimental`
+- Automate sync/update checks and changelog generation.
+- Require governance reviews for security-sensitive agent/tool changes.
+
+## Validation metrics and quality gates
+
+| Area | Metric | Target |
+| --- | --- | --- |
+| Code quality | Build + test pass rate | >= 95% automated pass rate |
+| Consistency | Style/rule violations per PR | Downward trend, near-zero critical violations |
+| Security | Critical findings after review | 0 critical unresolved |
+| Performance | Regression incidents after change | No unapproved regressions |
+| Cost control | Premium model usage ratio | Premium limited to planning/security-heavy tasks |
+| Context efficiency | Average prompt/context size | Downward trend via scoped prompts/skills |
+
+## References reviewed (core set)
+
+- <https://docs.github.com/en/copilot/reference/customization-cheat-sheet>
+- <https://code.visualstudio.com/docs/copilot/customization/overview>
+- <https://docs.github.com/en/copilot/concepts/agents/about-agent-skills>
+- <https://github.blog/changelog/2025-12-18-github-copilot-now-supports-agent-skills/>
+- <https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/overview>
+- <https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-10.0>
+- <https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices>
+- <https://raw.githubusercontent.com/github/awesome-copilot/main/README.md>
+- <https://raw.githubusercontent.com/anthropics/skills/main/README.md>
+- <https://raw.githubusercontent.com/openai/skills/main/README.md>
+- <https://skills.sh/aaronontheweb/dotnet-skills>

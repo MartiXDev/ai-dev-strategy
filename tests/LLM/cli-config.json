@@ -1,0 +1,49 @@
+{
+  "cliOptions": {
+    "copilot": {
+      "description": "GitHub Copilot CLI (standalone)",
+      "command": "copilot",
+      "subcommands": [],
+      "modelFlag": "--model",
+      "promptFlag": "--prompt",
+      "stdinPrompt": false,
+      "timeoutSeconds": 300,
+      "notes": "Standalone Copilot CLI. Installed via winget/brew/npm. Supports --prompt and --model flags.",
+      "installUrl": "https://github.com/github/copilot-cli",
+      "installCommands": {
+        "windows": "winget install GitHub.Copilot",
+        "macos": "brew install copilot-cli",
+        "npm": "npm install -g @github/copilot"
+      }
+    },
+    "codex": {
+      "description": "OpenAI Codex CLI",
+      "command": "codex",
+      "subcommands": [],
+      "modelFlag": "--model",
+      "promptFlag": "--prompt",
+      "stdinPrompt": false,
+      "timeoutSeconds": 300,
+      "notes": "Codex CLI with direct prompt flag support.",
+      "installUrl": "https://github.com/openai/codex",
+      "extensionInstall": null
+    }
+  },
+  "orchestration": {
+    "maxParallelInstances": 6,
+    "staggerDelayMs": 500,
+    "retryOnFailure": true,
+    "maxRetries": 2,
+    "retryDelaySeconds": 5,
+    "captureStdout": true,
+    "captureStderr": true,
+    "outputEncoding": "utf-8"
+  },
+  "resultCapture": {
+    "saveRawOutput": true,
+    "extractCodeBlocks": true,
+    "codeBlockLanguage": "csharp",
+    "measureTokenCount": false,
+    "autoReviewCode": true
+  }
+}
