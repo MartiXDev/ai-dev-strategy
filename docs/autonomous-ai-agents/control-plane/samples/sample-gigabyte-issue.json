@@ -1,0 +1,35 @@
+{
+  "title": "Pilot slice: Local-first nightly batch rebuild",
+  "objective": "Route a high-capacity Local-first batch workload to the Gigabyte execution lane without manual relabeling.",
+  "acceptance_criteria": [
+    "The issue routes deterministically to the Gigabyte lane.",
+    "The lane selection reflects the workload class and throughput posture.",
+    "Cloud fallback remains available if the Gigabyte lane is unavailable."
+  ],
+  "test_intent": {
+    "strategy": "integration",
+    "focus": [
+      "Schema validation succeeds for Gigabyte-capable routing metadata.",
+      "Primary execution lane resolves to local-first-gigabyte.",
+      "Fallback from Gigabyte to Cloud-first is explicit."
+    ]
+  },
+  "data_sensitivity": "internal",
+  "dependency_metadata": {
+    "blocked_by": [
+      "#2"
+    ],
+    "blocks": [],
+    "external_dependencies": []
+  },
+  "variant": "local-first",
+  "routing_profile": {
+    "workload_class": "batch",
+    "hardware_affinity": "gigabyte",
+    "cost_posture": "throughput-priority"
+  },
+  "primary_execution_lane": "local-first-gigabyte",
+  "triage_labels": [
+    "ready-for-agent"
+  ]
+}

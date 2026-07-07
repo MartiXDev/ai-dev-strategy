@@ -1,7 +1,9 @@
 {
   "input_issue": "sample-issue.json",
   "triage_label": "ready-for-agent",
-  "primary_execution_lane": "cloud-first",
-  "routing_target": "agent-cloud-queue",
+  "variant": "local-first",
+  "primary_execution_lane": "local-first-lenovo-p52",
+  "routing_target": "agent-local-lenovo-queue",
+  "fallback_applied": false,
   "requires_manual_clarification": false
 }

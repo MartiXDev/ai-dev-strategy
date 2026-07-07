@@ -1,0 +1,13 @@
+{
+  "input_issue": "sample-issue.json",
+  "triage_label": "ready-for-agent",
+  "variant": "local-first",
+  "initial_execution_lane": "local-first-lenovo-p52",
+  "initial_routing_target": "agent-local-lenovo-queue",
+  "lane_health": "saturated",
+  "primary_execution_lane": "local-first-gigabyte",
+  "routing_target": "agent-local-gigabyte-queue",
+  "fallback_applied": true,
+  "fallback_reason": "lenovo-low-concurrency-capacity-exceeded",
+  "requires_manual_clarification": false
+}

@@ -1,0 +1,9 @@
+{
+  "input_issue": "sample-gigabyte-issue.json",
+  "triage_label": "ready-for-agent",
+  "variant": "local-first",
+  "primary_execution_lane": "local-first-gigabyte",
+  "routing_target": "agent-local-gigabyte-queue",
+  "fallback_applied": false,
+  "requires_manual_clarification": false
+}
