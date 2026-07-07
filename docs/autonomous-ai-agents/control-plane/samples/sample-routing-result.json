@@ -3,6 +3,8 @@
   "triage_label": "ready-for-agent",
   "primary_execution_lane": "cloud-first",
   "cloud_eligibility": "eligible",
+  "cloud_route_blocked": false,
+  "gate_failure_reasons": [],
   "routing_target": "agent-cloud-queue",
   "fallback_execution_lane": "none",
   "requires_manual_clarification": false

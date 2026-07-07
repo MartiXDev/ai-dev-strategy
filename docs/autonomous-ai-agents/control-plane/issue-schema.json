@@ -118,8 +118,7 @@
               "enum": [
                 "none",
                 "local-first-lenovo-p52",
-                "local-first-gigabyte",
-                "ready-for-human"
+                "local-first-gigabyte"
               ]
             },
             "gate_failure_reasons": {
