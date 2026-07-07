@@ -275,16 +275,6 @@
     {
       "if": {
         "properties": {
-          "variant": {
-            "const": "local-first"
-          }
-        },
-        "required": [
-          "variant"
-        ]
-      },
-      "then": {
-        "properties": {
           "primary_execution_lane": {
             "const": "cloud-first"
           },

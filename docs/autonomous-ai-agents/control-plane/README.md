@@ -12,7 +12,7 @@ routing in this repository.
 - `samples/sample-cloud-issue.json`: valid Cloud-first sample issue payload
 - `samples/sample-gigabyte-issue.json`: valid Local-first Gigabyte sample issue payload
 - `samples/sample-issue-gdpr-blocked.json`: valid cloud-first payload that is blocked by GDPR gate
-- `samples/sample-routing-result.json`: successful cloud route output
+- `samples/sample-routing-result.json`: successful Local-first Lenovo route output
 - `samples/sample-routing-result-gdpr-blocked.json`: blocked cloud route with deterministic fallback
 
 ## Canonical required fields
@@ -46,7 +46,7 @@ Get-Content .\docs\autonomous-ai-agents\control-plane\samples\sample-gigabyte-is
   Test-Json -SchemaFile .\docs\autonomous-ai-agents\control-plane\issue-schema.json
 ```
 
-Expected output for both sample issues: `True`.
+Expected output for all four sample issues: `True`.
 
 ```powershell
 Get-Content .\docs\autonomous-ai-agents\control-plane\samples\sample-issue-gdpr-blocked.json -Raw |
@@ -62,7 +62,7 @@ Routing intent is deterministic from:
 5. `routing_profile.cost_posture`
 6. `primary_execution_lane` (stored audit result of the deterministic policy)
 7. `lane_health` evaluated against `routing-policy.json`
-3. `compliance_metadata.gdpr_gate.cloud_eligibility` (cloud gate decision)
+8. `compliance_metadata.gdpr_gate.cloud_eligibility` (cloud gate decision)
 
 For cloud-first issues, GDPR gate inputs are mandatory before remote execution:
 
