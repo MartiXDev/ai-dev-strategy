@@ -1,0 +1,45 @@
+{
+  "title": "GDPR Gate MVP: Sensitivity, Redaction, DPA, and Cloud Block",
+  "objective": "Ensure cloud-first execution is blocked when GDPR gate checks fail and deterministic fallback is applied.",
+  "acceptance_criteria": [
+    "Cloud eligibility is explicitly determined from issue sensitivity and compliance metadata.",
+    "Redaction and audit requirements are required gate inputs before cloud execution.",
+    "When GDPR gate fails, cloud routing is blocked and deterministic fallback is applied."
+  ],
+  "test_intent": {
+    "strategy": "mixed",
+    "focus": [
+      "Restricted or non-compliant cloud-first issues are always blocked.",
+      "Fallback lane routing is deterministic on GDPR gate failure.",
+      "Gate failure reasons are auditable."
+    ]
+  },
+  "data_sensitivity": "restricted",
+  "compliance_metadata": {
+    "gdpr_gate": {
+      "redaction_status": "required-but-missing",
+      "audit_trail_complete": false,
+      "dpa_eligibility": "pending-review",
+      "cloud_eligibility": "blocked",
+      "fallback_execution_lane": "local-first-gigabyte",
+      "gate_failure_reasons": [
+        "restricted-sensitivity",
+        "redaction-incomplete",
+        "audit-trail-missing",
+        "dpa-pending-review"
+      ]
+    }
+  },
+  "dependency_metadata": {
+    "blocked_by": [
+      "#3"
+    ],
+    "blocks": [],
+    "external_dependencies": []
+  },
+  "primary_execution_lane": "cloud-first",
+  "triage_labels": [
+    "ready-for-agent"
+  ],
+  "variant": "cloud-first"
+}

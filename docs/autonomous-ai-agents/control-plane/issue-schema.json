@@ -10,6 +10,7 @@
     "acceptance_criteria",
     "test_intent",
     "data_sensitivity",
+    "compliance_metadata",
     "dependency_metadata",
     "primary_execution_lane",
     "triage_labels"
@@ -66,6 +67,78 @@
         "confidential",
         "restricted"
       ]
+    },
+    "compliance_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gdpr_gate"
+      ],
+      "properties": {
+        "gdpr_gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "redaction_status",
+            "audit_trail_complete",
+            "dpa_eligibility",
+            "cloud_eligibility",
+            "fallback_execution_lane",
+            "gate_failure_reasons"
+          ],
+          "properties": {
+            "redaction_status": {
+              "type": "string",
+              "enum": [
+                "not-required",
+                "required-and-complete",
+                "required-but-missing"
+              ]
+            },
+            "audit_trail_complete": {
+              "type": "boolean"
+            },
+            "dpa_eligibility": {
+              "type": "string",
+              "enum": [
+                "eligible",
+                "not-eligible",
+                "pending-review"
+              ]
+            },
+            "cloud_eligibility": {
+              "type": "string",
+              "enum": [
+                "eligible",
+                "blocked"
+              ]
+            },
+            "fallback_execution_lane": {
+              "type": "string",
+              "enum": [
+                "none",
+                "local-first-lenovo-p52",
+                "local-first-gigabyte",
+                "ready-for-human"
+              ]
+            },
+            "gate_failure_reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "restricted-sensitivity",
+                  "redaction-incomplete",
+                  "audit-trail-missing",
+                  "dpa-not-eligible",
+                  "dpa-pending-review"
+                ]
+              },
+              "uniqueItems": true
+            }
+          }
+        }
+      }
     },
     "dependency_metadata": {
       "type": "object",
@@ -147,6 +220,358 @@
         "properties": {
           "variant": {
             "const": "cloud-first"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "cloud-first"
+          },
+          "data_sensitivity": {
+            "const": "confidential"
+          }
+        },
+        "required": [
+          "primary_execution_lane",
+          "data_sensitivity"
+        ]
+      },
+      "then": {
+        "properties": {
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "redaction_status": {
+                    "const": "required-and-complete"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "cloud-first"
+          },
+          "data_sensitivity": {
+            "const": "restricted"
+          }
+        },
+        "required": [
+          "primary_execution_lane",
+          "data_sensitivity"
+        ]
+      },
+      "then": {
+        "properties": {
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "cloud_eligibility": {
+                    "const": "blocked"
+                  },
+                  "fallback_execution_lane": {
+                    "const": "local-first-gigabyte"
+                  },
+                  "gate_failure_reasons": {
+                    "contains": {
+                      "const": "restricted-sensitivity"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "cloud-first"
+          },
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "redaction_status": {
+                    "const": "required-but-missing"
+                  }
+                },
+                "required": [
+                  "redaction_status"
+                ]
+              }
+            },
+            "required": [
+              "gdpr_gate"
+            ]
+          }
+        },
+        "required": [
+          "primary_execution_lane",
+          "compliance_metadata"
+        ]
+      },
+      "then": {
+        "properties": {
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "cloud_eligibility": {
+                    "const": "blocked"
+                  },
+                  "fallback_execution_lane": {
+                    "const": "local-first-gigabyte"
+                  },
+                  "gate_failure_reasons": {
+                    "contains": {
+                      "const": "redaction-incomplete"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "cloud-first"
+          },
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "audit_trail_complete": {
+                    "const": false
+                  }
+                },
+                "required": [
+                  "audit_trail_complete"
+                ]
+              }
+            },
+            "required": [
+              "gdpr_gate"
+            ]
+          }
+        },
+        "required": [
+          "primary_execution_lane",
+          "compliance_metadata"
+        ]
+      },
+      "then": {
+        "properties": {
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "cloud_eligibility": {
+                    "const": "blocked"
+                  },
+                  "fallback_execution_lane": {
+                    "const": "local-first-gigabyte"
+                  },
+                  "gate_failure_reasons": {
+                    "contains": {
+                      "const": "audit-trail-missing"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "cloud-first"
+          },
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "dpa_eligibility": {
+                    "const": "not-eligible"
+                  }
+                },
+                "required": [
+                  "dpa_eligibility"
+                ]
+              }
+            },
+            "required": [
+              "gdpr_gate"
+            ]
+          }
+        },
+        "required": [
+          "primary_execution_lane",
+          "compliance_metadata"
+        ]
+      },
+      "then": {
+        "properties": {
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "cloud_eligibility": {
+                    "const": "blocked"
+                  },
+                  "fallback_execution_lane": {
+                    "const": "local-first-gigabyte"
+                  },
+                  "gate_failure_reasons": {
+                    "contains": {
+                      "const": "dpa-not-eligible"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "cloud-first"
+          },
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "dpa_eligibility": {
+                    "const": "pending-review"
+                  }
+                },
+                "required": [
+                  "dpa_eligibility"
+                ]
+              }
+            },
+            "required": [
+              "gdpr_gate"
+            ]
+          }
+        },
+        "required": [
+          "primary_execution_lane",
+          "compliance_metadata"
+        ]
+      },
+      "then": {
+        "properties": {
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "cloud_eligibility": {
+                    "const": "blocked"
+                  },
+                  "fallback_execution_lane": {
+                    "const": "local-first-gigabyte"
+                  },
+                  "gate_failure_reasons": {
+                    "contains": {
+                      "const": "dpa-pending-review"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "cloud-first"
+          },
+          "data_sensitivity": {
+            "enum": [
+              "public",
+              "internal",
+              "confidential"
+            ]
+          },
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "redaction_status": {
+                    "enum": [
+                      "not-required",
+                      "required-and-complete"
+                    ]
+                  },
+                  "audit_trail_complete": {
+                    "const": true
+                  },
+                  "dpa_eligibility": {
+                    "const": "eligible"
+                  }
+                },
+                "required": [
+                  "redaction_status",
+                  "audit_trail_complete",
+                  "dpa_eligibility"
+                ]
+              }
+            },
+            "required": [
+              "gdpr_gate"
+            ]
+          }
+        },
+        "required": [
+          "primary_execution_lane",
+          "data_sensitivity",
+          "compliance_metadata"
+        ]
+      },
+      "then": {
+        "properties": {
+          "compliance_metadata": {
+            "properties": {
+              "gdpr_gate": {
+                "properties": {
+                  "cloud_eligibility": {
+                    "const": "eligible"
+                  },
+                  "fallback_execution_lane": {
+                    "const": "none"
+                  },
+                  "gate_failure_reasons": {
+                    "maxItems": 0
+                  }
+                }
+              }
+            }
           }
         }
       }
