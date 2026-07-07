@@ -10,7 +10,7 @@ This pack defines guidance for two strategy variants:
 ## Scope
 
 - Markdown planning artifacts only in this iteration
-- One file per phase (A-E)
+- One file per phase (01-05)
 - Shared structure with measurable gates and KPI thresholds
 
 ## Phase documents
