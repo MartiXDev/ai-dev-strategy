@@ -55,9 +55,27 @@
     "local-first-lenovo-p52": "agent-local-lenovo-queue",
     "local-first-gigabyte": "agent-local-gigabyte-queue"
   },
+  "gdpr_gate_policy": {
+    "enabled_for_execution_lane": "cloud-first",
+    "required_inputs": [
+      "data_sensitivity",
+      "compliance_metadata.gdpr_gate.redaction_status",
+      "compliance_metadata.gdpr_gate.audit_trail_complete",
+      "compliance_metadata.gdpr_gate.dpa_eligibility",
+      "compliance_metadata.gdpr_gate.cloud_eligibility"
+    ],
+    "on_gate_failure": {
+      "block_cloud_route": true,
+      "fallback_execution_lane": "local-first-gigabyte",
+      "fallback_routing_target": "agent-local-gigabyte-queue",
+      "requires_manual_clarification": true
+    }
+  },
   "routing_rule": {
     "when_triage_label": "ready-for-agent",
     "route_by": "primary_execution_lane",
+    "pre_route_gate": "gdpr-cloud-gate",
+    "cloud_gate_decision_field": "compliance_metadata.gdpr_gate.cloud_eligibility",
     "fallback_triage_label_if_missing_lane": "ready-for-human"
   }
 }
