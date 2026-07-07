@@ -58,6 +58,6 @@
   "routing_rule": {
     "when_triage_label": "ready-for-agent",
     "route_by": "primary_execution_lane",
-    "fallback_if_missing_lane": "ready-for-human"
+    "fallback_triage_label_if_missing_lane": "ready-for-human"
   }
 }
