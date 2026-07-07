@@ -1,0 +1,186 @@
+{
+  "llmCategories": {
+    "free": {
+      "description": "Free LLMs with no cost per request",
+      "multiplier": 0,
+      "models": [
+        {
+          "name": "GPT-5 Mini",
+          "model": "gpt-5-mini",
+          "enabled": true,
+          "notes": "GA. Recommended default for general coding and writing."
+        },
+        {
+          "name": "Raptor mini",
+          "model": "raptor-mini",
+          "enabled": true,
+          "notes": "GA. Fine-tuned GPT-5 mini variant for coding workflows."
+        },
+        {
+          "name": "MAI-Code-1-Flash",
+          "model": "mai-code-1-flash",
+          "enabled": true,
+          "notes": "GA. Continuously improving Microsoft coding model."
+        }
+      ]
+    },
+    "cheap": {
+      "description": "Cheap LLMs with request multiplier < 1x",
+      "multiplier": 0.33,
+      "models": [
+        {
+          "name": "Claude Haiku 4.5",
+          "model": "claude-haiku-4.5",
+          "enabled": true,
+          "costPerRequest": 0.0001,
+          "notes": "GA. Fast model for simple or repetitive coding tasks."
+        },
+        {
+          "name": "Gemini 3 Flash",
+          "model": "gemini-3-flash",
+          "enabled": true,
+          "costPerRequest": 0.00008,
+          "notes": "Public preview. Availability can vary by IDE version and plan."
+        },
+        {
+          "name": "Gemini 3.5 Flash",
+          "model": "gemini-3.5-flash",
+          "enabled": true,
+          "costPerRequest": 0.0001,
+          "notes": "GA. Fast model for lightweight coding assistance."
+        },
+        {
+          "name": "GPT-5.4 Mini",
+          "model": "gpt-5.4-mini",
+          "enabled": true,
+          "costPerRequest": 0.00012,
+          "notes": "GA. Lower-cost GPT-5.4 family model for agentic coding tasks."
+        }
+      ]
+    },
+    "standard": {
+      "description": "Standard pricing LLMs",
+      "multiplier": 1,
+      "models": [
+        {
+          "name": "GPT-5.3-Codex",
+          "model": "gpt-5.3-codex",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "supportedReasoningModes": [
+            "low",
+            "medium",
+            "high",
+            "extra-high"
+          ],
+          "defaultReasoningMode": "medium",
+          "benchmarkReasoningModes": [
+            "low",
+            "medium",
+            "high",
+            "extra-high"
+          ],
+          "notes": "GA. Strong model for agentic software development."
+        },
+        {
+          "name": "GPT-5.4",
+          "model": "gpt-5.4",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "supportedReasoningModes": [
+            "low",
+            "medium",
+            "high",
+            "extra-high"
+          ],
+          "defaultReasoningMode": "medium",
+          "benchmarkReasoningModes": [
+            "low",
+            "medium",
+            "high",
+            "extra-high"
+          ],
+          "notes": "Active standard benchmark model. Codex automation can compare each configured reasoning mode."
+        },
+        {
+          "name": "GPT-5.5",
+          "model": "gpt-5.5",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "supportedReasoningModes": [
+            "low",
+            "medium",
+            "high",
+            "extra-high"
+          ],
+          "defaultReasoningMode": "medium",
+          "benchmarkReasoningModes": [
+            "low",
+            "medium",
+            "high",
+            "extra-high"
+          ],
+          "notes": "GA. Recommended for deep reasoning and debugging."
+        },
+        {
+          "name": "Claude Sonnet 4.6",
+          "model": "claude-sonnet-4.6",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "notes": "GA. General-purpose coding and agent tasks."
+        },
+        {
+          "name": "Claude Sonnet 5",
+          "model": "claude-sonnet-5",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "notes": "GA. Latest Sonnet family model (availability depends on client version/plan)."
+        },
+        {
+          "name": "Claude Opus 4.8",
+          "model": "claude-opus-4.8",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "notes": "GA. High-depth reasoning model."
+        },
+        {
+          "name": "Claude Fable 5",
+          "model": "claude-fable-5",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "notes": "GA. Enterprise/Business orgs may need explicit enablement; Anthropic retains data for safety classifiers on this model."
+        },
+        {
+          "name": "Gemini 2.5 Pro",
+          "model": "gemini-2.5-pro",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "notes": "GA. Strong deep reasoning model."
+        },
+        {
+          "name": "Gemini 3.1 Pro",
+          "model": "gemini-3.1-pro",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "notes": "Public preview. Effective for complex edit-test loops."
+        },
+        {
+          "name": "Kimi-K2.7-Code",
+          "model": "kimi-k2.7-code",
+          "enabled": true,
+          "costPerRequest": 0.0005,
+          "notes": "GA. Available in Copilot-supported model picker surfaces."
+        }
+      ]
+    }
+  },
+  "testConfiguration": {
+    "codexParityDefaultModel": "gpt-5.3-codex",
+    "maxRetries": 3,
+    "timeoutSeconds": 120,
+    "warmupRuns": 0,
+    "testRuns": 1,
+    "collectMetrics": true,
+    "saveRawResponses": true
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "dotnet-testing-quality",
+  "description": "TUnit-first .NET testing quality guidance with integration-test fallback rules, naming patterns, and CI reliability gates.",
+  "version": "1.0.0",
+  "author": {
+    "name": "MartiXDev"
+  },
+  "repository": "https://github.com/MartiXDev/ai-dev-strategy",
+  "license": "MIT",
+  "keywords": [
+    "dotnet",
+    "csharp",
+    "tunit",
+    "testing",
+    "integration-testing",
+    "quality-gates",
+    "reliability"
+  ],
+  "skills": [
+    "./skills/tunit-testing-quality/"
+  ]
+}

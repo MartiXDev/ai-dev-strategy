@@ -1,0 +1,25 @@
+# Do not commit test results to version control
+results/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Generated reports
+**/reports/*.html
+**/reports/*.json
+**/reports/*.md
+
+# Editor-specific files
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# PowerShell debug files
+*.pdb
+*.log

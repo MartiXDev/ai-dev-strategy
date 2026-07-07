@@ -1,0 +1,23 @@
+{
+  "name": "dotnet-devops-release",
+  "description": "Release safety guidance for .NET delivery with strict CI build/test gates, deployment preflight checks, and rollback-ready release discipline.",
+  "version": "1.0.0",
+  "author": {
+    "name": "MartiXDev Community"
+  },
+  "repository": "https://github.com/MartiXDev/ai-dev-strategy",
+  "license": "MIT",
+  "keywords": [
+    "dotnet",
+    "devops",
+    "ci",
+    "cd",
+    "release",
+    "deployment",
+    "quality-gates",
+    "rollback"
+  ],
+  "skills": [
+    "./skills/dotnet-devops-release-safety"
+  ]
+}

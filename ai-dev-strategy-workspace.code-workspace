@@ -1,19 +1,27 @@
 {
 	"folders": [
 		{
-			"path": "../../github/awesome-copilot"
+			"name": "awesome-copilot",
+			"path": "../awesome-copilot"
 		},
 		{
+			"name": "skills",
 			"path": "../../openai/skills"
 		},
 		{
+			"name": "skills",
 			"path": "../../anthropics/skills"
 		},
 		{
+			"name": "spec-kit",
 			"path": "../../github/spec-kit"
 		},
 		{
+			"name": "ai-dev-strategy",
 			"path": "."
 		}
-	]
+	],
+	"settings": {
+		"powershell.cwd": "ai-dev-strategy"
+	}
 }

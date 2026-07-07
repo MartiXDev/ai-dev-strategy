@@ -1,0 +1,21 @@
+{
+  "name": "dotnet-performance",
+  "description": "Practical .NET performance guidance for async correctness, non-blocking code paths, efficient data access, caching strategy, and hotspot-driven optimization.",
+  "version": "1.0.0",
+  "author": {
+    "name": "MartiXDev Community"
+  },
+  "repository": "https://github.com/MartiXDev/ai-dev-strategy",
+  "license": "MIT",
+  "keywords": [
+    "dotnet",
+    "performance",
+    "async",
+    "caching",
+    "efcore",
+    "optimization"
+  ],
+  "skills": [
+    "./skills/dotnet-performance"
+  ]
+}
