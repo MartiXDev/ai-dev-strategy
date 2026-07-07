@@ -60,9 +60,9 @@ Convert specification inputs into routable issues with complete execution data.
 ## Outputs
 
 - Routable issue backlog
-- Canonical issue schema validation artifact (`../../control-plane/samples/sample-issue.json`)
-- Stable label taxonomy application (`../../control-plane/label-taxonomy.json`)
-- Dependency-safe execution graph
+  - Canonical issue schema validation artifact (`../../control-plane/issue-schema.json`)
+  - Stable label taxonomy application (`../../control-plane/label-taxonomy.json`)
+  - Dependency-safe execution graph
 
 ## Owners and SLA
 
