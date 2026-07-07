@@ -69,6 +69,7 @@
       ],
       "supported_hardware_affinity": [
         "none",
+        "lenovo-p52",
         "gigabyte"
       ],
       "supported_cost_postures": [
@@ -173,14 +174,40 @@
     {
       "from": "local-first-gigabyte",
       "when_lane_health": "blocked",
+      "when_hardware_affinity": [
+        "none"
+      ],
       "to": "cloud-first",
       "reason": "Gigabyte lane is unavailable and cloud-first can absorb eligible overflow."
     },
     {
       "from": "local-first-gigabyte",
+      "when_lane_health": "blocked",
+      "when_hardware_affinity": [
+        "lenovo-p52",
+        "gigabyte"
+      ],
+      "to": "ready-for-human",
+      "reason": "Gigabyte lane is unavailable but the work is hardware-affine; manual checkpoint required."
+    },
+    {
+      "from": "local-first-gigabyte",
       "when_lane_health": "saturated",
+      "when_hardware_affinity": [
+        "none"
+      ],
       "to": "cloud-first",
       "reason": "Gigabyte worker pool exceeded the declared threshold."
+    },
+    {
+      "from": "local-first-gigabyte",
+      "when_lane_health": "saturated",
+      "when_hardware_affinity": [
+        "lenovo-p52",
+        "gigabyte"
+      ],
+      "to": "ready-for-human",
+      "reason": "Gigabyte is saturated but the work is hardware-affine; manual checkpoint required."
     },
     {
       "from": "cloud-first",

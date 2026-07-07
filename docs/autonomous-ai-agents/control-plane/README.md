@@ -66,9 +66,10 @@ For `ready-for-agent`, lanes map to:
 |---|---|---|---|---|
 |Cloud-first|lightweight / standard / heavy / batch|none|any|cloud-first|
 |Local-first|lightweight|lenovo-p52|any|local-first-lenovo-p52|
-|Local-first|lightweight|none|minimize-cost or balanced|local-first-lenovo-p52|
 |Local-first|lightweight / standard / heavy / batch|gigabyte|any|local-first-gigabyte|
-|Local-first|standard / heavy / batch|none|balanced or throughput-priority|local-first-gigabyte|
+|Local-first|lightweight|none|minimize-cost or balanced|local-first-lenovo-p52|
+|Local-first|lightweight|none|throughput-priority|local-first-gigabyte|
+|Local-first|standard / heavy / batch|none|any|local-first-gigabyte|
 
 Lenovo-constrained workloads always stay on Lenovo and Lenovo remains the
 lowest-cost Local-first lane for non-constrained lightweight work.

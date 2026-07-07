@@ -64,7 +64,8 @@
       "routing_profile.workload_class",
       "routing_profile.hardware_affinity",
       "routing_profile.cost_posture",
-      "primary_execution_lane"
+      "primary_execution_lane",
+      "lane_health"
     ],
     "fallback_rule_source": "routing-policy.json#fallback_rules",
     "fallback_triage_label_if_missing_lane": "ready-for-human"
