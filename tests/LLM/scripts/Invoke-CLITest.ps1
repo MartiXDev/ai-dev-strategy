@@ -16,6 +16,12 @@
 .PARAMETER ModelName
     Human-readable display name of the model.
 
+.PARAMETER BaseModelId
+    Optional underlying model identifier passed to the CLI. When omitted, ModelId is used.
+
+.PARAMETER BaseModelName
+    Optional underlying model display name. When omitted, ModelName is used.
+
 .PARAMETER Category
     LLM category: "free", "cheap", or "standard".
 
@@ -43,6 +49,14 @@
 
 .PARAMETER CostPerRequest
     Cost per request in USD (default: 0 for free models).
+
+.PARAMETER ReasoningMode
+    Optional user-facing reasoning mode label for benchmark variants. Accepted values are
+    "low", "medium", "high", and "extra-high". The label is always recorded in metadata, but
+    reasoningModeApplied remains false when the selected CLI cannot actually enforce it.
+
+.PARAMETER CodexReasoningEffort
+    Optional Codex reasoning effort override. When omitted, ReasoningMode is mapped automatically.
 
 .PARAMETER TimeoutSeconds
     Maximum seconds to wait for CLI response (default: 1800).
@@ -74,6 +88,14 @@ param(
   [ValidateNotNullOrEmpty()]
   [string]$ModelName,
 
+  [Parameter()]
+  [AllowEmptyString()]
+  [string]$BaseModelId = '',
+
+  [Parameter()]
+  [AllowEmptyString()]
+  [string]$BaseModelName = '',
+
   [Parameter(Mandatory)]
   [ValidateSet('free', 'cheap', 'standard')]
   [string]$Category,
@@ -104,6 +126,14 @@ param(
 
   [Parameter()]
   [decimal]$CostPerRequest = 0,
+
+  [Parameter()]
+  [AllowEmptyString()]
+  [string]$ReasoningMode = '',
+
+  [Parameter()]
+  [AllowEmptyString()]
+  [string]$CodexReasoningEffort = '',
 
   [Parameter()]
   [ValidateRange(30, 3600)]
@@ -182,6 +212,48 @@ function Remove-ItemSafe {
   if (Test-Path $Path) {
     Remove-Item $Path -Force -ErrorAction SilentlyContinue -WhatIf:$WhatIfPreference
   }
+}
+
+function ConvertTo-CodexReasoningEffortValue {
+  param(
+    [Parameter(Mandatory)]
+    [ValidateSet('low', 'medium', 'high', 'extra-high')]
+    [string]$RequestedReasoningMode
+  )
+
+  switch ($RequestedReasoningMode) {
+    'extra-high' { return 'xhigh' }
+    default { return $RequestedReasoningMode }
+  }
+}
+
+function Initialize-ModelIdentity {
+  $validReasoningModes = @('low', 'medium', 'high', 'extra-high')
+  $validCodexEfforts = @('low', 'medium', 'high', 'xhigh')
+
+  if (-not [string]::IsNullOrWhiteSpace($ReasoningMode) -and $validReasoningModes -notcontains $ReasoningMode) {
+    throw "ReasoningMode must be one of: $($validReasoningModes -join ', ')"
+  }
+
+  if (-not [string]::IsNullOrWhiteSpace($CodexReasoningEffort) -and $validCodexEfforts -notcontains $CodexReasoningEffort) {
+    throw "CodexReasoningEffort must be one of: $($validCodexEfforts -join ', ')"
+  }
+
+  $script:ResolvedBaseModelId = if ([string]::IsNullOrWhiteSpace($BaseModelId)) { $ModelId } else { $BaseModelId }
+  $script:ResolvedBaseModelName = if ([string]::IsNullOrWhiteSpace($BaseModelName)) { $ModelName } else { $BaseModelName }
+  $script:ResolvedReasoningMode = if ([string]::IsNullOrWhiteSpace($ReasoningMode)) { $null } else { $ReasoningMode }
+
+  if (-not [string]::IsNullOrWhiteSpace($CodexReasoningEffort)) {
+    $script:ResolvedCodexReasoningEffort = $CodexReasoningEffort
+  }
+  elseif (-not [string]::IsNullOrWhiteSpace($script:ResolvedReasoningMode)) {
+    $script:ResolvedCodexReasoningEffort = ConvertTo-CodexReasoningEffortValue -RequestedReasoningMode $script:ResolvedReasoningMode
+  }
+  else {
+    $script:ResolvedCodexReasoningEffort = $null
+  }
+
+  $script:ReasoningModeApplied = ($CLIType -eq 'codex' -and -not [string]::IsNullOrWhiteSpace($script:ResolvedCodexReasoningEffort))
 }
 
 function Get-ConstrainedPrompt {
@@ -266,6 +338,7 @@ function Get-RequirementPackText {
 }
 
 function Initialize-TestContext {
+  Initialize-ModelIdentity
   New-DirectoryIfMissing -Path $OutputDir
   $codeDir = Join-Path $OutputDir 'code'
   $logsDir = Join-Path $OutputDir 'logs'
@@ -309,6 +382,7 @@ function Initialize-TestContext {
     MaxRetries             = 2
     RetryDelay             = 5
     AgentName              = $effectiveAgentName
+    WarnedCopilotReasoningLimitation = $false
   }
 
   $scriptDir = $PSScriptRoot
@@ -359,6 +433,61 @@ function Initialize-TestContext {
   Set-Utf8Content -Path $script:testContext.TempPromptPath -Value $script:PromptText
 }
 
+function Get-ReasoningExecutionNote {
+  if ([string]::IsNullOrWhiteSpace($script:ResolvedReasoningMode)) {
+    return ''
+  }
+
+  if ($script:ReasoningModeApplied) {
+    return "Reasoning mode '$($script:ResolvedReasoningMode)' was applied via $CLIType CLI."
+  }
+
+  return "Reasoning mode '$($script:ResolvedReasoningMode)' was recorded for this benchmark target, but current Copilot CLI automation did not apply a non-interactive override."
+}
+
+function Merge-ObservationText {
+  param(
+    [Parameter()]
+    [AllowEmptyString()]
+    [string]$Primary,
+
+    [Parameter()]
+    [AllowEmptyString()]
+    [string]$Secondary
+  )
+
+  $parts = [System.Collections.Generic.List[string]]::new()
+  if (-not [string]::IsNullOrWhiteSpace($Primary)) {
+    $parts.Add($Primary.Trim()) | Out-Null
+  }
+
+  if (-not [string]::IsNullOrWhiteSpace($Secondary)) {
+    $parts.Add($Secondary.Trim()) | Out-Null
+  }
+
+  return ($parts -join ' ')
+}
+
+function Get-ReasoningOverrideStatusLabel {
+  param(
+    [Parameter(Mandatory)]
+    [object]$Result
+  )
+
+  if (-not $Result.PSObject.Properties['reasoningMode'] -or [string]::IsNullOrWhiteSpace([string]$Result.reasoningMode)) {
+    return 'N/A'
+  }
+
+  if ($Result.PSObject.Properties['reasoningModeApplied'] -and [bool]$Result.reasoningModeApplied) {
+    return "Applied via $($Result.cliType) CLI"
+  }
+
+  if ($Result.PSObject.Properties['cliType'] -and [string]$Result.cliType -eq 'copilot') {
+    return 'Recorded only; current Copilot CLI automation did not apply a non-interactive override'
+  }
+
+  return 'Recorded only; the selected CLI run did not confirm a reasoning override'
+}
 function Set-InstanceStatus {
   param(
     [Parameter(Mandatory)]
@@ -372,15 +501,19 @@ function Set-InstanceStatus {
   )
 
   $status = [ordered]@{
-    model        = $ModelName
-    modelId      = $ModelId
-    cliType      = $CLIType
-    agentName    = $script:testContext.AgentName
-    state        = $State
-    message      = $Message
-    attempt      = $Attempt
-    cliProcessId = $CliProcessId
-    updatedAt    = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff')
+    model                 = $ModelName
+    modelId               = $ModelId
+    baseModelId           = $script:ResolvedBaseModelId
+    reasoningMode         = $script:ResolvedReasoningMode
+    codexReasoningEffort  = $script:ResolvedCodexReasoningEffort
+    reasoningModeApplied  = $script:ReasoningModeApplied
+    cliType               = $CLIType
+    agentName             = $script:testContext.AgentName
+    state                 = $State
+    message               = $Message
+    attempt               = $Attempt
+    cliProcessId          = $CliProcessId
+    updatedAt             = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff')
   }
 
   Set-Utf8Content -Path $script:testContext.StatusPath -Value ($status | ConvertTo-Json -Depth 5)
@@ -415,23 +548,29 @@ function Stop-TestTranscript {
 
 function New-ResultObject {
   return [ordered]@{
-    llmName              = $ModelName
-    llmModel             = $ModelId
-    category             = $Category
-    cliType              = $CLIType
-    agentName            = $script:testContext.AgentName
-    benchmarkProfile     = $BenchmarkProfile
-    testPromptId         = $PromptId
-    startTime            = ''
-    endTime              = ''
-    durationSeconds      = 0
-    requestCount         = 0
-    totalCost            = 0
-    responseCompleteness = 'pending'
-    rawOutputLength      = 0
-    extractedCodeLength  = 0
-    generatedFiles       = @()
-    codeQuality          = [ordered]@{
+    llmName               = $ModelName
+    llmModel              = $ModelId
+    baseModelName         = $script:ResolvedBaseModelName
+    baseModelId           = $script:ResolvedBaseModelId
+    modelVariantId        = $ModelId
+    reasoningMode         = $script:ResolvedReasoningMode
+    codexReasoningEffort  = $script:ResolvedCodexReasoningEffort
+    reasoningModeApplied  = $script:ReasoningModeApplied
+    category              = $Category
+    cliType               = $CLIType
+    agentName             = $script:testContext.AgentName
+    benchmarkProfile      = $BenchmarkProfile
+    testPromptId          = $PromptId
+    startTime             = ''
+    endTime               = ''
+    durationSeconds       = 0
+    requestCount          = 0
+    totalCost             = 0
+    responseCompleteness  = 'pending'
+    rawOutputLength       = 0
+    extractedCodeLength   = 0
+    generatedFiles        = @()
+    codeQuality           = [ordered]@{
       compilable             = $null
       followsBestPractices   = $null
       hasProperErrorHandling = $null
@@ -439,12 +578,12 @@ function New-ResultObject {
       usesModernFeatures     = $null
       overallScore           = $null
     }
-    performanceMetrics   = [ordered]@{
+    performanceMetrics    = [ordered]@{
       timeToFirstToken    = $null
       tokensPerSecond     = $null
       totalTokensEstimate = $null
     }
-    strategyAlignment    = [ordered]@{
+    strategyAlignment     = [ordered]@{
       hasSpecArtifacts                 = $null
       followsExpectedStructure         = $null
       reusesMartixPatterns             = $null
@@ -452,8 +591,8 @@ function New-ResultObject {
       referencesSkillsOrAgents         = $null
       overallScore                     = $null
     }
-    errorDetails         = $null
-    observations         = ''
+    errorDetails          = $null
+    observations          = ''
   }
 }
 
@@ -501,10 +640,16 @@ function Invoke-CliAttempt {
   $stdoutPath = Join-Path $script:testContext.LogsDir ("stdout-attempt-{0}.txt" -f $AttemptNumber)
   $stderrPath = Join-Path $script:testContext.LogsDir ("stderr-attempt-{0}.txt" -f $AttemptNumber)
   $quotedPrompt = '"' + ($script:PromptText -replace '"', '\"') + '"'
+  $effectiveModelId = $script:ResolvedBaseModelId
 
   switch ($CLIType) {
     'copilot' {
-      $argumentList = @('--prompt', $quotedPrompt, '--model', $ModelId, '--allow-all')
+      if (-not $script:testContext.WarnedCopilotReasoningLimitation -and -not [string]::IsNullOrWhiteSpace($script:ResolvedReasoningMode)) {
+        Write-Warning "Reasoning mode '$($script:ResolvedReasoningMode)' is recorded for '$ModelName', but current Copilot CLI automation does not document a non-interactive reasoning-effort flag. The run will use the base model without applying that override."
+        $script:testContext.WarnedCopilotReasoningLimitation = $true
+      }
+
+      $argumentList = @('--prompt', $quotedPrompt, '--model', $effectiveModelId, '--allow-all')
       if (-not [string]::IsNullOrWhiteSpace($script:testContext.AgentName)) {
         if (-not [string]::IsNullOrWhiteSpace($AgentName) -and $script:testContext.AgentName -ne $AgentName) {
           Write-Verbose "Resolved Copilot agent '$AgentName' to '$($script:testContext.AgentName)' for CLI compatibility."
@@ -522,9 +667,14 @@ function Invoke-CliAttempt {
       }
     }
     'codex' {
+      $argumentList = @('exec', '--model', $effectiveModelId)
+      if (-not [string]::IsNullOrWhiteSpace($script:ResolvedCodexReasoningEffort)) {
+        $argumentList += @('--config', ('model_reasoning_effort="{0}"' -f $script:ResolvedCodexReasoningEffort))
+      }
+      $argumentList += $quotedPrompt
       $processArgs = @{
         FilePath     = 'codex'
-        ArgumentList = @('exec', '--model', $ModelId, $quotedPrompt)
+        ArgumentList = $argumentList
       }
     }
   }
@@ -1073,6 +1223,11 @@ function Write-ObservationTemplate {
 ## Auto-generated Summary
 
 - **Model**: $ModelName ($ModelId)
+- **Base Model**: $($script:ResolvedBaseModelName) ($($script:ResolvedBaseModelId))
+- **Reasoning Mode**: $(if ($Result.reasoningMode) { $Result.reasoningMode } else { 'N/A' })
+- **Codex Reasoning Effort**: $(if ($Result.codexReasoningEffort) { $Result.codexReasoningEffort } else { 'N/A' })
+- **Reasoning Applied**: $(if ($Result.reasoningModeApplied) { 'Yes' } else { 'No' })
+- **Reasoning Override Status**: $(Get-ReasoningOverrideStatusLabel -Result $Result)
 - **Category**: $Category
 - **CLI**: $CLIType
 - **Benchmark Profile**: $BenchmarkProfile
@@ -1182,6 +1337,11 @@ function Invoke-Test {
     $result.responseCompleteness = 'error'
     $result.errorDetails = $run.Error
     $result.observations = "Failed after $($script:testContext.MaxRetries) attempts. Error: $($run.Error)"
+  }
+
+  $reasoningExecutionNote = Get-ReasoningExecutionNote
+  if (-not [string]::IsNullOrWhiteSpace($reasoningExecutionNote)) {
+    $result.observations = Merge-ObservationText -Primary $reasoningExecutionNote -Secondary $result.observations
   }
 
   Set-InstanceStatus -State $result.responseCompleteness -Message "Test finished with status '$($result.responseCompleteness)'." -Attempt $run.Attempt

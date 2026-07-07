@@ -32,12 +32,12 @@ When prompted, select a test prompt (press `1` for the CRUD API prompt).
 
 The orchestrator will:
 
-1. Launch up to 5 parallel CLI instances by default (configurable up to 8)
+1. Launch up to 8 parallel CLI instances by default (configurable up to 16)
 2. Send the prompt to each model simultaneously
 3. Capture timing, output, and extract code blocks
 4. Run automated quality checks
 5. Generate comparison reports
-6. Update `Write-Progress` with each model session state/attempt/PID/elapsed/message details
+6. Update `Write-Progress` with each benchmark target session state/attempt/PID/elapsed/message details, including separate reasoning variants
 
 The runner enforces that each model outputs all artifacts inside its own model folder (`code\`, `docs\`, `plans\`, `logs\`).
 
@@ -68,6 +68,15 @@ start ..\results\<timestamp>\<prompt>\reports\comparison-report.html
 
 # Use Codex CLI instead of Copilot
 .\Invoke-LLMOrchestrator.ps1 -LLMCategory "all" -CLIType "codex"
+
+# Benchmark GPT-5.4 reasoning modes via Copilot (separate targets, recorded-only labels)
+.\Invoke-LLMOrchestrator.ps1 -SpecificModels @("gpt-5.4") -CLIType "copilot"
+
+# Benchmark GPT-5.4 reasoning modes via Codex (override applied)
+.\Invoke-LLMOrchestrator.ps1 -SpecificModels @("gpt-5.4") -CLIType "codex"
+
+# Compare only selected GPT-5.4 reasoning modes
+.\Invoke-LLMOrchestrator.ps1 -SpecificModels @("gpt-5.4") -CLIType "codex" -ReasoningModes @("low", "extra-high")
 
 # Increase parallel slots
 .\Invoke-LLMOrchestrator.ps1 -LLMCategory "all" -MaxParallel 8
@@ -107,7 +116,7 @@ results/20260216-143000/
     ├── session-metadata.json      # Session config snapshot
     ├── prompt-used.md             # The prompt that was sent
     ├── all-results.json           # Consolidated metrics for all models
-    ├── gpt-4-1/                   # Per-model results
+    ├── gpt-4-1/                   # Per-benchmark-target results
     │   ├── metrics.json           # Timing, cost, quality scores
     │   ├── observations.md        # Auto-generated review template
     │   ├── code/
@@ -125,6 +134,8 @@ results/20260216-143000/
     │       ├── instance-events.log
     │       ├── console-transcript.log
     │       └── extracted-artifacts.json
+    ├── gpt-5.4-low/               # Per-variant results for reasoning benchmarks
+    │   └── ...
     ├── claude-haiku-4-5/
     │   └── ...
     └── reports/                   # Generated per-prompt comparison reports
@@ -181,6 +192,8 @@ Get-ChildItem ..\results -Directory | Select-Object Name
 Get-Help .\Invoke-LLMOrchestrator.ps1 -Full
 Get-Help .\Invoke-CLITest.ps1 -Full
 ```
+
+Reasoning benchmarks now run as separate benchmark targets on both CLI paths. Result folders use `<model>-<reasoning-mode>` naming whenever a reasoning mode is present. Only Codex currently applies the override automatically; Copilot keeps `reasoningModeApplied = false` and progress/reporting call out that the reasoning label was recorded only.
 
 ---
 

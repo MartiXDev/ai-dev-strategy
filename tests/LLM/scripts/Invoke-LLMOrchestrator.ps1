@@ -17,6 +17,13 @@
 .PARAMETER SpecificModels
     Array of specific model IDs to test (overrides LLMCategory)
 
+.PARAMETER ReasoningModes
+    Optional reasoning modes to benchmark for supported models. Accepted values are
+    "low", "medium", "high", and "extra-high". When omitted, supported models expand to the
+    configured benchmarkReasoningModes from llm-config.json. Copilot runs still keep
+    reasoningModeApplied = false because current automation does not document a non-interactive
+    reasoning-effort override.
+
 .PARAMETER MaxParallel
     Maximum number of concurrent model tests (default: 8, max: 16).
 
@@ -52,6 +59,9 @@
     .\Invoke-LLMOrchestrator.ps1 -SpecificModels @("gpt-4.1", "claude-haiku-4.5") -MaxParallel 2
 
 .EXAMPLE
+    .\Invoke-LLMOrchestrator.ps1 -SpecificModels @("gpt-5.4") -CLIType "codex" -ReasoningModes @("low", "high")
+
+.EXAMPLE
     .\Invoke-LLMOrchestrator.ps1 -LLMCategory "cheap" -CLIType "codex"
 
 .EXAMPLE
@@ -69,6 +79,10 @@ param(
 
   [Parameter(Mandatory = $false)]
   [string[]]$SpecificModels,
+
+  [Parameter(Mandatory = $false)]
+  [ValidateSet("low", "medium", "high", "extra-high")]
+  [string[]]$ReasoningModes = @(),
 
   [Parameter(Mandatory = $false)]
   [ValidateRange(1, 16)]
@@ -238,6 +252,8 @@ function Get-LiveSessionStatus {
   $attempt = 0
   $cliPid = 0
   $message = 'Waiting for status file...'
+  $reasoningMode = ''
+  $reasoningModeApplied = $true
 
   if (Test-Path $statusPath) {
     try {
@@ -246,10 +262,16 @@ function Get-LiveSessionStatus {
       if ($status.attempt) { $attempt = [int]$status.attempt }
       if ($status.cliProcessId) { $cliPid = [int]$status.cliProcessId }
       if ($status.message) { $message = [string]$status.message }
+      if ($status.PSObject.Properties['reasoningMode'] -and $status.reasoningMode) { $reasoningMode = [string]$status.reasoningMode }
+      if ($status.PSObject.Properties['reasoningModeApplied']) { $reasoningModeApplied = [bool]$status.reasoningModeApplied }
     }
     catch {
       $message = "Status parse error: $($_.Exception.Message)"
     }
+  }
+
+  if (-not [string]::IsNullOrWhiteSpace($reasoningMode) -and -not $reasoningModeApplied) {
+    $message = "reasoning=$reasoningMode (recorded-only) | $message"
   }
 
   if ($message.Length -gt 90) {
@@ -669,6 +691,8 @@ function New-RunSummaryReport {
     $modelRows += [PSCustomObject]@{
       ModelName        = $first.llmName
       ModelId          = $group.Name
+      BaseModelName    = if ($first.PSObject.Properties['baseModelName']) { $first.baseModelName } else { $first.llmName }
+      ReasoningMode    = if ($first.PSObject.Properties['reasoningMode']) { $first.reasoningMode } else { $null }
       Category         = $first.category
       Runs             = $group.Count
       PromptCoverage   = "$coverageCount/$totalPrompts"
@@ -780,7 +804,7 @@ $externalAssetList
 ## Global Totals (All LLMs + All Prompts)
 
 - **Total Prompts**: $($PromptFiles.Count)
-- **Total LLMs**: $($rankedRows.Count)
+- **Total Benchmark Targets**: $($rankedRows.Count)
 - **Total Executions**: $totalExecutions
 - **Completed**: $completeTotal
 - **Partial/Truncated**: $partialTotal
@@ -795,20 +819,21 @@ $externalAssetList
 
 $requirementPackList
 
-## Per-LLM Totals Across All Prompts
+## Per-Benchmark-Target Totals Across All Prompts
 
-| Rank | Model | Category | Prompt Coverage | Runs | Completeness % | Avg Quality | Avg Strategy | Avg Duration (s) | Total Cost |
-|------|-------|----------|-----------------|------|----------------|-------------|--------------|------------------|------------|
+| Rank | Target | Base Model | Reasoning | Category | Prompt Coverage | Runs | Completeness % | Avg Quality | Avg Strategy | Avg Duration (s) | Total Cost |
+|------|--------|------------|-----------|----------|-----------------|------|----------------|-------------|--------------|------------------|------------|
 "@
 
   $rank = 1
   foreach ($row in $rankedRows) {
-    $content += "| $rank | $($row.ModelName) | $($row.Category) | $($row.PromptCoverage) | $($row.Runs) | $($row.CompletenessRate) | $($row.AvgQuality) | $($row.AvgStrategy) | $($row.AvgDuration) | `$$($row.TotalCost) |`n"
+    $reasoningLabel = if ([string]::IsNullOrWhiteSpace($row.ReasoningMode)) { '-' } else { $row.ReasoningMode }
+    $content += "| $rank | $($row.ModelName) | $($row.BaseModelName) | $reasoningLabel | $($row.Category) | $($row.PromptCoverage) | $($row.Runs) | $($row.CompletenessRate) | $($row.AvgQuality) | $($row.AvgStrategy) | $($row.AvgDuration) | `$$($row.TotalCost) |`n"
     $rank++
   }
 
   if ($rankedRows.Count -eq 0) {
-    $content += "| - | _No results_ | - | - | - | - | - | - | - | - |`n"
+    $content += "| - | _No results_ | - | - | - | - | - | - | - | - | - | - |`n"
   }
 
   $content += @"
@@ -851,6 +876,7 @@ $requirementPackList
     ProfileName      = $profileName
     PromptCount      = $PromptFiles.Count
     ModelCount       = $rankedRows.Count
+    BenchmarkTargetCount = $rankedRows.Count
     GlobalTotals     = [ordered]@{
       TotalExecutions = $totalExecutions
       Completed       = $completeTotal
@@ -1036,6 +1062,156 @@ function Get-PromptText {
   exit 1
 }
 
+function Get-ModelStringProperty {
+  param(
+    [Parameter(Mandatory)]
+    [object]$InputObject,
+
+    [Parameter(Mandatory)]
+    [string]$PropertyName
+  )
+
+  $property = $InputObject.PSObject.Properties[$PropertyName]
+  if ($null -eq $property -or $null -eq $property.Value) {
+    return ''
+  }
+
+  return [string]$property.Value
+}
+
+function Get-ModelStringArrayProperty {
+  param(
+    [Parameter(Mandatory)]
+    [object]$InputObject,
+
+    [Parameter(Mandatory)]
+    [string]$PropertyName
+  )
+
+  $property = $InputObject.PSObject.Properties[$PropertyName]
+  if ($null -eq $property -or $null -eq $property.Value) {
+    return @()
+  }
+
+  return @(
+    @($property.Value | ForEach-Object { [string]$_ }) |
+    Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+  )
+}
+
+function ConvertTo-CodexReasoningEffort {
+  param(
+    [Parameter(Mandatory)]
+    [ValidateSet('low', 'medium', 'high', 'extra-high')]
+    [string]$ReasoningMode
+  )
+
+  switch ($ReasoningMode) {
+    'extra-high' { return 'xhigh' }
+    default { return $ReasoningMode }
+  }
+}
+
+function Get-ResultFolderName {
+  param(
+    [Parameter(Mandatory)]
+    [ValidateNotNullOrEmpty()]
+    [string]$BaseModelId,
+
+    [Parameter()]
+    [AllowNull()]
+    [AllowEmptyString()]
+    [string]$ReasoningMode
+  )
+
+  $folderName = if ([string]::IsNullOrWhiteSpace($ReasoningMode)) {
+    $BaseModelId
+  }
+  else {
+    '{0}-{1}' -f $BaseModelId, $ReasoningMode
+  }
+
+  return ($folderName -replace '[^a-zA-Z0-9._-]', '-')
+}
+function New-ModelBenchmarkTargets {
+  param(
+    [Parameter(Mandatory)]
+    [object]$Model,
+
+    [Parameter(Mandatory)]
+    [string]$CategoryName,
+
+    [Parameter()]
+    [string[]]$RequestedReasoningModes = @()
+  )
+
+  $baseModelId = [string]$Model.model
+  $baseModelName = [string]$Model.name
+  $notes = Get-ModelStringProperty -InputObject $Model -PropertyName 'notes'
+  $cost = if ($Model.PSObject.Properties['costPerRequest']) { $Model.costPerRequest } else { 0 }
+  $supportedReasoningModes = Get-ModelStringArrayProperty -InputObject $Model -PropertyName 'supportedReasoningModes'
+  $benchmarkReasoningModes = Get-ModelStringArrayProperty -InputObject $Model -PropertyName 'benchmarkReasoningModes'
+  $defaultReasoningMode = Get-ModelStringProperty -InputObject $Model -PropertyName 'defaultReasoningMode'
+  $selectedReasoningModes = @()
+
+  if ($supportedReasoningModes.Count -gt 0) {
+    if ($RequestedReasoningModes.Count -gt 0) {
+      $selectedReasoningModes = @($RequestedReasoningModes)
+    }
+    elseif ($benchmarkReasoningModes.Count -gt 0) {
+      $selectedReasoningModes = @($benchmarkReasoningModes)
+    }
+    elseif (-not [string]::IsNullOrWhiteSpace($defaultReasoningMode)) {
+      $selectedReasoningModes = @($defaultReasoningMode)
+    }
+  }
+
+  if ($CLIType -eq 'copilot' -and $selectedReasoningModes.Count -gt 0) {
+    Write-Warning "Reasoning benchmark targets for '$baseModelId' will run as separate Copilot sessions, but current Copilot CLI automation does not document a non-interactive reasoning-effort override. These runs keep reasoningModeApplied = false and record the limitation in status/reporting."
+  }
+
+  foreach ($mode in $selectedReasoningModes) {
+    if ($supportedReasoningModes.Count -gt 0 -and $supportedReasoningModes -notcontains $mode) {
+      throw "Reasoning mode '$mode' is not supported for model '$baseModelId'. Supported values: $($supportedReasoningModes -join ', ')"
+    }
+  }
+
+  if ($selectedReasoningModes.Count -eq 0) {
+    return @(
+      [PSCustomObject]@{
+        Name                 = $baseModelName
+        ModelId              = $baseModelId
+        BaseModelId          = $baseModelId
+        BaseModelName        = $baseModelName
+        Category             = $CategoryName
+        Enabled              = $Model.enabled
+        Cost                 = $cost
+        Notes                = $notes
+        ReasoningMode        = $null
+        CodexReasoningEffort = $null
+      }
+    )
+  }
+
+  $targets = [System.Collections.Generic.List[object]]::new()
+  foreach ($mode in $selectedReasoningModes) {
+    $targets.Add([PSCustomObject]@{
+        Name                 = "$baseModelName [$mode]"
+        ModelId              = "$baseModelId--$mode"
+        BaseModelId          = $baseModelId
+        BaseModelName        = $baseModelName
+        Category             = $CategoryName
+        Enabled              = $Model.enabled
+        Cost                 = $cost
+        Notes                = $notes
+        ReasoningMode        = $mode
+        CodexReasoningEffort = ConvertTo-CodexReasoningEffort -ReasoningMode $mode
+      })
+  }
+
+  return @($targets)
+}
+
 function New-ModelResultObject {
   param(
     [Parameter(Mandatory)]
@@ -1046,11 +1222,16 @@ function New-ModelResultObject {
   )
 
   return [PSCustomObject]@{
-    Name     = $Model.name
-    ModelId  = $Model.model
-    Category = $CategoryName
-    Enabled  = $Model.enabled
-    Cost     = if ($Model.PSObject.Properties['costPerRequest']) { $Model.costPerRequest } else { 0 }
+    Name                 = $Model.Name
+    ModelId              = $Model.ModelId
+    BaseModelId          = $Model.BaseModelId
+    BaseModelName        = $Model.BaseModelName
+    Category             = $CategoryName
+    Enabled              = $Model.Enabled
+    Cost                 = $Model.Cost
+    Notes                = $Model.Notes
+    ReasoningMode        = $Model.ReasoningMode
+    CodexReasoningEffort = $Model.CodexReasoningEffort
   }
 }
 
@@ -1065,10 +1246,20 @@ function Get-ModelsToTest {
   if ($SpecificModels) {
     foreach ($modelId in $SpecificModels) {
       $found = $false
+      $lookupModelId = $modelId
+      $requestedModesForModel = @($ReasoningModes)
+
+      if ($modelId -match '^(?<base>.+)--(?<mode>low|medium|high|extra-high)$') {
+        $lookupModelId = $Matches.base
+        $requestedModesForModel = @($Matches.mode)
+      }
+
       foreach ($category in $Config.llmCategories.PSObject.Properties) {
-        $model = $category.Value.models | Where-Object { $_.model -eq $modelId }
+        $model = $category.Value.models | Where-Object { $_.model -eq $lookupModelId -or $_.name -eq $lookupModelId }
         if ($model) {
-          $modelsToTest += New-ModelResultObject -Model $model -CategoryName $category.Name
+          foreach ($target in (New-ModelBenchmarkTargets -Model $model -CategoryName $category.Name -RequestedReasoningModes $requestedModesForModel)) {
+            $modelsToTest += New-ModelResultObject -Model $target -CategoryName $category.Name
+          }
           $found = $true
           break
         }
@@ -1091,11 +1282,22 @@ function Get-ModelsToTest {
       $category = $Config.llmCategories.$catName
       foreach ($model in $category.models) {
         if ($model.enabled) {
-          $modelsToTest += New-ModelResultObject -Model $model -CategoryName $catName
+          foreach ($target in (New-ModelBenchmarkTargets -Model $model -CategoryName $catName -RequestedReasoningModes $ReasoningModes)) {
+            $modelsToTest += New-ModelResultObject -Model $target -CategoryName $catName
+          }
         }
       }
     }
   }
+
+  $seenModelIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+  $dedupedModelsToTest = [System.Collections.Generic.List[object]]::new()
+  foreach ($model in $modelsToTest) {
+    if ($seenModelIds.Add([string]$model.ModelId)) {
+      $dedupedModelsToTest.Add($model)
+    }
+  }
+  $modelsToTest = @($dedupedModelsToTest)
 
   if ($modelsToTest.Count -eq 0) {
     Write-Error 'No models selected for testing'
@@ -1114,7 +1316,15 @@ function Show-ModelsToTest {
 
   Write-Host "`nModels to Test: $($Models.Count)" -ForegroundColor Cyan
   foreach ($model in $Models) {
-    Write-Host "  - $($model.Name) ($($model.Category))" -ForegroundColor Yellow
+    $reasoningLabel = if (-not [string]::IsNullOrWhiteSpace($model.ReasoningMode)) {
+      if ($CLIType -eq 'copilot') {
+        " | reasoning: $($model.ReasoningMode) (recorded-only in Copilot CLI)"
+      }
+      else {
+        " | reasoning: $($model.ReasoningMode)"
+      }
+    } else { '' }
+    Write-Host "  - $($model.Name) ($($model.Category)$reasoningLabel)" -ForegroundColor Yellow
   }
 }
 
@@ -1161,6 +1371,18 @@ function New-Session {
     ShowCLIProgress    = [bool]$ShowCLIProgress
     ModelsCount        = $ModelsToTest.Count
     Categories         = ($ModelsToTest | Select-Object -ExpandProperty Category -Unique)
+    ReasoningModesRequested = @($ReasoningModes)
+    BenchmarkTargets   = @(
+      $ModelsToTest | ForEach-Object {
+        [ordered]@{
+          name          = $_.Name
+          modelId       = $_.ModelId
+          baseModelId   = $_.BaseModelId
+          reasoningMode = $_.ReasoningMode
+          category      = $_.Category
+        }
+      }
+    )
     RequirementPacks   = @($RequirementPackPaths | ForEach-Object { [System.IO.Path]::GetFileName($_) })
     ConfigurationState = @{
       llmConfigVersion = (Get-FileHash $ConfigPath).Hash.Substring(0, 8)
@@ -1234,7 +1456,7 @@ function Start-ModelTestJob {
     [string]$TerminalWindowId
   )
 
-  $modelDir = Join-Path $SessionDir ($Model.ModelId -replace '[^a-zA-Z0-9._-]', '-')
+  $modelDir = Join-Path $SessionDir (Get-ResultFolderName -BaseModelId $Model.BaseModelId -ReasoningMode $Model.ReasoningMode)
   New-DirectoryIfMissing -Path $modelDir
 
   $logsDir = Join-Path $modelDir 'logs'
@@ -1258,7 +1480,14 @@ function Start-ModelTestJob {
       [string[]]$RequirementPackPaths
     )
 
-    $modelDir = Join-Path $SessionDir ($Model.ModelId -replace '[^a-zA-Z0-9._-]', '-')
+    $resultFolderName = if ([string]::IsNullOrWhiteSpace($Model.ReasoningMode)) {
+      $Model.BaseModelId
+    }
+    else {
+      '{0}-{1}' -f $Model.BaseModelId, $Model.ReasoningMode
+    }
+
+    $modelDir = Join-Path $SessionDir ($resultFolderName -replace '[^a-zA-Z0-9._-]', '-')
     if (-not (Test-Path $modelDir)) {
       New-Item -Path $modelDir -ItemType Directory -Force | Out-Null
     }
@@ -1268,6 +1497,8 @@ function Start-ModelTestJob {
       $result = & $HelperScript `
         -ModelId $Model.ModelId `
         -ModelName $Model.Name `
+        -BaseModelId $Model.BaseModelId `
+        -BaseModelName $Model.BaseModelName `
         -Category $Model.Category `
         -PromptText $PromptText `
         -PromptId $PromptId `
@@ -1276,6 +1507,8 @@ function Start-ModelTestJob {
         -CLIType $CLIType `
         -AgentName $CopilotAgent `
         -CostPerRequest $Model.Cost `
+        -ReasoningMode $Model.ReasoningMode `
+        -CodexReasoningEffort $Model.CodexReasoningEffort `
         -RequirementPackFiles $RequirementPackPaths `
         -ShowCLIProgress:$ShowCLIProgress `
         -TerminalWindowId $TerminalWindowId `
@@ -1532,7 +1765,7 @@ try {
           $runningJobs.Add($job) | Out-Null
           $jobMetadata[$job.Id] = [PSCustomObject]@{
             ModelName = $nextModel.Name
-            OutputDir = Join-Path $sessionDir ($nextModel.ModelId -replace '[^a-zA-Z0-9._-]', '-')
+            OutputDir = Join-Path $sessionDir (Get-ResultFolderName -BaseModelId $nextModel.BaseModelId -ReasoningMode $nextModel.ReasoningMode)
             StartedAt = Get-Date
           }
         }
@@ -1568,7 +1801,8 @@ try {
           }
 
           if ($jobResult.Success) {
-            Write-Host "  ✓ $($jobResult.Model.Name) completed in $([Math]::Round($jobResult.Duration, 2))s" -ForegroundColor Green
+            $completionSuffix = if ($CLIType -eq 'copilot' -and -not [string]::IsNullOrWhiteSpace($jobResult.Model.ReasoningMode)) { ' [reasoning recorded only]' } else { '' }
+            Write-Host "  ✓ $($jobResult.Model.Name) completed in $([Math]::Round($jobResult.Duration, 2))s$completionSuffix" -ForegroundColor Green
             $results.Add($jobResult)
           }
           else {
@@ -1633,3 +1867,8 @@ finally {
     Write-Host "Orchestrator transcript saved: $($script:orchestratorTranscriptPath)" -ForegroundColor DarkGray
   }
 }
+
+
+
+
+

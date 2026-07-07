@@ -204,7 +204,7 @@ function Get-MarkdownHeader {
 
 ## Executive Summary
 
-- **Total Models Tested**: $($Stats.TotalTests)
+- **Total Benchmark Targets Tested**: $($Stats.TotalTests)
 - **Free Models**: $($Stats.FreeModels)
 - **Cheap Models**: $($Stats.CheapModels)
 - **Standard Models**: $($Stats.StandardModels)
@@ -231,8 +231,8 @@ function Get-MarkdownJoinedResultsSection {
 
   $text = @"
 
-| Rank | Category | Model | Duration | Cost | Completeness | Quality Score | Notes |
-|------|----------|-------|----------|------|--------------|---------------|-------|
+| Rank | Category | Model | Reasoning | Duration | Cost | Completeness | Quality Score | Notes |
+|------|----------|-------|-----------|----------|------|--------------|---------------|-------|
 
 "@
 
@@ -242,7 +242,8 @@ function Get-MarkdownJoinedResultsSection {
     $completeness = if ($result.responseCompleteness) { $result.responseCompleteness } else { 'N/A' }
     $qualityScore = Get-QualityScore -Result $result
     $notes = if ($result.observations) { $result.observations.Substring(0, [Math]::Min(50, $result.observations.Length)) } else { '' }
-    $text += "| $rank | $($result.category) | $($result.llmName) | $($result.durationSeconds)s | $cost | $completeness | $qualityScore/5 | $notes |`n"
+    $reasoningLabel = if ($result.PSObject.Properties['reasoningMode'] -and -not [string]::IsNullOrWhiteSpace([string]$result.reasoningMode)) { [string]$result.reasoningMode } else { '-' }
+    $text += "| $rank | $($result.category) | $($result.llmName) | $reasoningLabel | $($result.durationSeconds)s | $cost | $completeness | $qualityScore/5 | $notes |`n"
     $rank++
   }
 

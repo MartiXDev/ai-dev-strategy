@@ -34,6 +34,34 @@
       "path": "C:\\Git\\MartiXDev\\WebApi\\src\\PROGRAMMER_SUMMARY.md",
       "kind": "shared-library-guidance",
       "notes": "Reusable patterns such as Guards, Results, Specifications, SmartEnums, SharedKernel."
+    },
+    {
+      "id": "aaronontheweb-dotnet-skills",
+      "name": "Aaronontheweb .NET Skills",
+      "path": "C:\\Git\\Aaronontheweb\\dotnet-skills",
+      "kind": "skills",
+      "notes": ".NET-focused reusable skill catalog."
+    },
+    {
+      "id": "vercel-agent-skills",
+      "name": "Vercel Agent Skills",
+      "path": "C:\\Git\\vercel-labs\\agent-skills",
+      "kind": "skills",
+      "notes": "Reusable agent skill examples and references."
+    },
+    {
+      "id": "vercel-next-skills",
+      "name": "Vercel Next Skills",
+      "path": "C:\\Git\\vercel-labs\\next-skills",
+      "kind": "skills",
+      "notes": "Next.js-oriented skill catalog from Vercel Labs."
+    },
+    {
+      "id": "mhagrelius-dotnet-10-csharp-14",
+      "name": "mhagrelius .NET 10 C# 14 Skill",
+      "path": "C:\\Git\\mhagrelius\\dotfiles\\.claude\\skills\\dotnet-10-csharp-14",
+      "kind": "skills",
+      "notes": "Focused .NET 10 and C# 14 Claude skill."
     }
   ]
 }
