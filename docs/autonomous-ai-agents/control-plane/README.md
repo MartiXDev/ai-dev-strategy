@@ -11,6 +11,9 @@ routing in this repository.
 - `samples/sample-issue.json`: valid Local-first Lenovo sample issue payload
 - `samples/sample-cloud-issue.json`: valid Cloud-first sample issue payload
 - `samples/sample-gigabyte-issue.json`: valid Local-first Gigabyte sample issue payload
+- `samples/sample-issue-gdpr-blocked.json`: valid cloud-first payload that is blocked by GDPR gate
+- `samples/sample-routing-result.json`: successful cloud route output
+- `samples/sample-routing-result-gdpr-blocked.json`: blocked cloud route with deterministic fallback
 
 ## Canonical required fields
 
@@ -21,6 +24,7 @@ Every routable issue must include:
 - acceptance_criteria
 - test_intent
 - data_sensitivity
+- compliance_metadata
 - dependency_metadata
 - variant
 - routing_profile
@@ -42,7 +46,12 @@ Get-Content .\docs\autonomous-ai-agents\control-plane\samples\sample-gigabyte-is
   Test-Json -SchemaFile .\docs\autonomous-ai-agents\control-plane\issue-schema.json
 ```
 
-Expected output: `True` for each sample issue.
+Expected output for both sample issues: `True`.
+
+```powershell
+Get-Content .\docs\autonomous-ai-agents\control-plane\samples\sample-issue-gdpr-blocked.json -Raw |
+  Test-Json -SchemaFile .\docs\autonomous-ai-agents\control-plane\issue-schema.json
+```
 
 Routing intent is deterministic from:
 
@@ -53,6 +62,15 @@ Routing intent is deterministic from:
 5. `routing_profile.cost_posture`
 6. `primary_execution_lane` (stored audit result of the deterministic policy)
 7. `lane_health` evaluated against `routing-policy.json`
+3. `compliance_metadata.gdpr_gate.cloud_eligibility` (cloud gate decision)
+
+For cloud-first issues, GDPR gate inputs are mandatory before remote execution:
+
+- `data_sensitivity`
+- `compliance_metadata.gdpr_gate.redaction_status`
+- `compliance_metadata.gdpr_gate.audit_trail_complete`
+- `compliance_metadata.gdpr_gate.dpa_eligibility`
+- `compliance_metadata.gdpr_gate.cloud_eligibility`
 
 For `ready-for-agent`, lanes map to:
 
@@ -84,6 +102,11 @@ workloads.
 
 `samples/sample-fallback-routing-result.json` exercises the saturated Lenovo
 scenario and shows the deterministic reroute to Gigabyte.
+When GDPR gate fails for cloud-first:
+
+- Cloud route is blocked.
+- Deterministic fallback lane is `local-first-gigabyte`.
+- Deterministic fallback route is `agent-local-gigabyte-queue`.
 
 For all non-agent triage states (`needs-triage`, `needs-info`,
 `ready-for-human`, `wontfix`), routing is non-automated by policy.

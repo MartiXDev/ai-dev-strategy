@@ -1,0 +1,16 @@
+{
+  "input_issue": "sample-issue-gdpr-blocked.json",
+  "triage_label": "ready-for-agent",
+  "primary_execution_lane": "cloud-first",
+  "cloud_eligibility": "blocked",
+  "cloud_route_blocked": true,
+  "fallback_execution_lane": "local-first-gigabyte",
+  "routing_target": "agent-local-gigabyte-queue",
+  "requires_manual_clarification": true,
+  "gate_failure_reasons": [
+    "restricted-sensitivity",
+    "redaction-incomplete",
+    "audit-trail-missing",
+    "dpa-pending-review"
+  ]
+}
