@@ -13,6 +13,7 @@ routing in this repository.
 
 Every routable issue must include:
 
+- title
 - objective
 - acceptance_criteria
 - test_intent
