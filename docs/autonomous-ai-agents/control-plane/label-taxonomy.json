@@ -1,0 +1,63 @@
+{
+  "version": "1.0.0",
+  "triage_vocabulary_source": "docs/agents/triage-labels.md",
+  "triage_labels": {
+    "needs-triage": {
+      "routing_intent": "manual-triage-queue",
+      "description": "Maintainer evaluation required before routing.",
+      "allowed_next": [
+        "needs-info",
+        "ready-for-agent",
+        "ready-for-human",
+        "wontfix"
+      ],
+      "automated_execution_enabled": false
+    },
+    "needs-info": {
+      "routing_intent": "awaiting-reporter-input",
+      "description": "Blocked until additional clarification is provided.",
+      "allowed_next": [
+        "needs-triage",
+        "ready-for-agent",
+        "ready-for-human",
+        "wontfix"
+      ],
+      "automated_execution_enabled": false
+    },
+    "ready-for-agent": {
+      "routing_intent": "deterministic-lane-routing",
+      "description": "Specification is complete and routable by execution lane.",
+      "allowed_next": [
+        "ready-for-human",
+        "wontfix"
+      ],
+      "automated_execution_enabled": true
+    },
+    "ready-for-human": {
+      "routing_intent": "human-implementation-queue",
+      "description": "Requires human implementation or checkpoint review.",
+      "allowed_next": [
+        "needs-info",
+        "ready-for-agent",
+        "wontfix"
+      ],
+      "automated_execution_enabled": false
+    },
+    "wontfix": {
+      "routing_intent": "terminal-no-action",
+      "description": "Closed path, no execution.",
+      "allowed_next": [],
+      "automated_execution_enabled": false
+    }
+  },
+  "execution_lane_routes": {
+    "cloud-first": "agent-cloud-queue",
+    "local-first-lenovo-p52": "agent-local-lenovo-queue",
+    "local-first-gigabyte": "agent-local-gigabyte-queue"
+  },
+  "routing_rule": {
+    "when_triage_label": "ready-for-agent",
+    "route_by": "primary_execution_lane",
+    "fallback_triage_label_if_missing_lane": "ready-for-human"
+  }
+}

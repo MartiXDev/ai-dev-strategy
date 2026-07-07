@@ -1,0 +1,7 @@
+{
+  "input_issue": "sample-issue.json",
+  "triage_label": "ready-for-agent",
+  "primary_execution_lane": "cloud-first",
+  "routing_target": "agent-cloud-queue",
+  "requires_manual_clarification": false
+}

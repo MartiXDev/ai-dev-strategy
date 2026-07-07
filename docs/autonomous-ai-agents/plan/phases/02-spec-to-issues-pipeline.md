@@ -43,8 +43,8 @@ Convert goals into actionable issues with dependencies, labels, and acceptance.
 
 ## Deliverables
 
-- Canonical issue schema
-- Label taxonomy with ownership and trigger semantics
+- Canonical issue schema (`../../control-plane/issue-schema.json`)
+- Label taxonomy with ownership and trigger semantics (`../../control-plane/label-taxonomy.json`)
 - Dependency encoding rules
 - Routing metadata policy per variant
 
