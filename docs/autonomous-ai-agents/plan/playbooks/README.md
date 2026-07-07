@@ -20,7 +20,7 @@ This folder contains operational playbooks for phase-by-phase execution.
 
 - Cloud-first
 - Local-first (Lenovo P52)
-- Local-first (Gigabyte AI TOP ATOM)
+- Local-first (Gigabyte AI TOP ATOM; abbreviated as Gigabyte)
 
 ## Runbook schema
 
