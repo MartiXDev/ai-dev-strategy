@@ -12,6 +12,8 @@
     "data_sensitivity",
     "compliance_metadata",
     "dependency_metadata",
+    "variant",
+    "routing_profile",
     "primary_execution_lane",
     "triage_labels"
   ],
@@ -172,6 +174,42 @@
         }
       }
     },
+    "routing_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workload_class",
+        "hardware_affinity",
+        "cost_posture"
+      ],
+      "properties": {
+        "workload_class": {
+          "type": "string",
+          "enum": [
+            "lightweight",
+            "standard",
+            "heavy",
+            "batch"
+          ]
+        },
+        "hardware_affinity": {
+          "type": "string",
+          "enum": [
+            "none",
+            "lenovo-p52",
+            "gigabyte"
+          ]
+        },
+        "cost_posture": {
+          "type": "string",
+          "enum": [
+            "minimize-cost",
+            "balanced",
+            "throughput-priority"
+          ]
+        }
+      }
+    },
     "primary_execution_lane": {
       "type": "string",
       "enum": [
@@ -207,17 +245,28 @@
     {
       "if": {
         "properties": {
-          "primary_execution_lane": {
+          "variant": {
             "const": "cloud-first"
           }
         },
         "required": [
-          "primary_execution_lane"
+          "variant"
         ]
       },
       "then": {
         "properties": {
-          "variant": {
+          "routing_profile": {
+            "type": "object",
+            "properties": {
+              "hardware_affinity": {
+                "const": "none"
+              }
+            },
+            "required": [
+              "hardware_affinity"
+            ]
+          },
+          "primary_execution_lane": {
             "const": "cloud-first"
           }
         }
@@ -584,15 +633,195 @@
               "local-first-gigabyte"
             ]
           }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "variant": {
+            "const": "local-first"
+          },
+          "routing_profile": {
+            "type": "object",
+            "properties": {
+              "hardware_affinity": {
+                "const": "lenovo-p52"
+              }
+            },
+            "required": [
+              "hardware_affinity"
+            ]
+          }
         },
         "required": [
-          "primary_execution_lane"
+          "variant",
+          "routing_profile"
         ]
       },
       "then": {
         "properties": {
+          "routing_profile": {
+            "type": "object",
+            "properties": {
+              "workload_class": {
+                "const": "lightweight"
+              }
+            },
+            "required": [
+              "workload_class"
+            ]
+          },
+          "primary_execution_lane": {
+            "const": "local-first-lenovo-p52"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
           "variant": {
             "const": "local-first"
+          },
+          "routing_profile": {
+            "type": "object",
+            "properties": {
+              "hardware_affinity": {
+                "const": "gigabyte"
+              }
+            },
+            "required": [
+              "hardware_affinity"
+            ]
+          }
+        },
+        "required": [
+          "variant",
+          "routing_profile"
+        ]
+      },
+      "then": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "local-first-gigabyte"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "variant": {
+            "const": "local-first"
+          },
+          "routing_profile": {
+            "type": "object",
+            "properties": {
+              "workload_class": {
+                "const": "lightweight"
+              },
+              "hardware_affinity": {
+                "const": "none"
+              },
+              "cost_posture": {
+                "enum": [
+                  "minimize-cost",
+                  "balanced"
+                ]
+              }
+            },
+            "required": [
+              "workload_class",
+              "hardware_affinity",
+              "cost_posture"
+            ]
+          }
+        },
+        "required": [
+          "variant",
+          "routing_profile"
+        ]
+      },
+      "then": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "local-first-lenovo-p52"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "variant": {
+            "const": "local-first"
+          }
+        },
+        "allOf": [
+          {
+            "properties": {
+              "routing_profile": {
+                "type": "object",
+                "properties": {
+                  "hardware_affinity": {
+                    "const": "none"
+                  }
+                },
+                "required": [
+                  "hardware_affinity"
+                ]
+              }
+            }
+          },
+          {
+            "anyOf": [
+              {
+                "properties": {
+                  "routing_profile": {
+                    "type": "object",
+                    "properties": {
+                      "workload_class": {
+                        "enum": [
+                          "standard",
+                          "heavy",
+                          "batch"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "workload_class"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "routing_profile": {
+                    "type": "object",
+                    "properties": {
+                      "cost_posture": {
+                        "const": "throughput-priority"
+                      }
+                    },
+                    "required": [
+                      "cost_posture"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "required": [
+          "variant",
+          "routing_profile"
+        ]
+      },
+      "then": {
+        "properties": {
+          "primary_execution_lane": {
+            "const": "local-first-gigabyte"
           }
         }
       }

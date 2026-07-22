@@ -1,0 +1,46 @@
+{
+  "title": "Pilot slice: Cloud-first policy analysis run",
+  "objective": "Route a Cloud-first planning task to the cloud execution lane once prerequisite gates pass.",
+  "acceptance_criteria": [
+    "The issue routes deterministically to the cloud lane.",
+    "Cloud-first remains the primary lane for the routed work.",
+    "The issue can be escalated to ready-for-human if the cloud lane is unavailable."
+  ],
+  "test_intent": {
+    "strategy": "integration",
+    "focus": [
+      "Schema validation succeeds for Cloud-first routing metadata.",
+      "Primary execution lane resolves to cloud-first.",
+      "Cloud fallback to ready-for-human is defined for blocked or saturated execution."
+    ]
+  },
+  "data_sensitivity": "internal",
+  "compliance_metadata": {
+    "gdpr_gate": {
+      "redaction_status": "not-required",
+      "audit_trail_complete": true,
+      "dpa_eligibility": "eligible",
+      "cloud_eligibility": "eligible",
+      "fallback_execution_lane": "none",
+      "gate_failure_reasons": []
+    }
+  },
+  "dependency_metadata": {
+    "blocked_by": [
+      "#2",
+      "#4"
+    ],
+    "blocks": [],
+    "external_dependencies": []
+  },
+  "variant": "cloud-first",
+  "routing_profile": {
+    "workload_class": "standard",
+    "hardware_affinity": "none",
+    "cost_posture": "balanced"
+  },
+  "primary_execution_lane": "cloud-first",
+  "triage_labels": [
+    "ready-for-agent"
+  ]
+}

@@ -24,21 +24,23 @@ Run deterministic issue-to-agent execution with bounded retries and checkpoints.
 1. Trigger execution from label events.
 2. Enforce GDPR cloud gate before any remote inference.
 3. Apply per-agent budget and retry limits.
-4. Escalate failures that exceed retry threshold.
+4. Route blocked or saturated cloud work to `ready-for-human`.
+5. Escalate failures that exceed retry threshold.
 
 ### Local-first (Lenovo P52) lane
 
-1. Route only lightweight classes to local execution.
-2. Queue heavy tasks for fallback.
+1. Route only lightweight classes with `minimize-cost` or `balanced` posture to local execution.
+2. Reroute blocked or saturated Lenovo work to the Gigabyte lane.
 3. Apply low concurrency limits.
-4. Escalate saturation to platform owner.
+4. Escalate repeated saturation to platform owner.
 
 ### Local-first (Gigabyte) lane
 
-1. Route heavy and batch-eligible tasks locally.
-2. Apply bounded parallel worker pools.
-3. Monitor queue depth and timeout trends.
-4. Use fallback path when capacity threshold is exceeded.
+1. Route standard, heavy, batch, and throughput-priority workloads locally.
+2. Accept Lenovo overflow when the fallback policy is triggered.
+3. Apply bounded parallel worker pools.
+4. Monitor queue depth and timeout trends.
+5. Use Cloud-first fallback when capacity threshold is exceeded.
 
 ## Decision gates
 

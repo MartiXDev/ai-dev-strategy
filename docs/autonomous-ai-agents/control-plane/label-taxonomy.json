@@ -1,6 +1,7 @@
 {
   "version": "1.0.0",
   "triage_vocabulary_source": "docs/agents/triage-labels.md",
+  "routing_policy_ref": "routing-policy.json",
   "triage_labels": {
     "needs-triage": {
       "routing_intent": "manual-triage-queue",
@@ -74,6 +75,15 @@
   "routing_rule": {
     "when_triage_label": "ready-for-agent",
     "route_by": "primary_execution_lane",
+    "policy_inputs": [
+      "variant",
+      "routing_profile.workload_class",
+      "routing_profile.hardware_affinity",
+      "routing_profile.cost_posture",
+      "primary_execution_lane",
+      "lane_health"
+    ],
+    "fallback_rule_source": "routing-policy.json#fallback_rules",
     "pre_route_gate": "gdpr-cloud-gate",
     "cloud_gate_decision_field": "compliance_metadata.gdpr_gate.cloud_eligibility",
     "fallback_triage_label_if_missing_lane": "ready-for-human"

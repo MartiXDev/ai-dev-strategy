@@ -37,6 +37,11 @@
     "blocks": [],
     "external_dependencies": []
   },
+  "routing_profile": {
+    "workload_class": "standard",
+    "hardware_affinity": "none",
+    "cost_posture": "balanced"
+  },
   "primary_execution_lane": "cloud-first",
   "triage_labels": [
     "ready-for-agent"

@@ -1,0 +1,226 @@
+{
+  "version": "1.0.0",
+  "policy_scope": "variant-routing-and-execution-lane-fallback",
+  "triage_trigger": "ready-for-agent",
+  "deterministic_inputs": [
+    "triage_labels[0]",
+    "variant",
+    "routing_profile.workload_class",
+    "routing_profile.hardware_affinity",
+    "routing_profile.cost_posture",
+    "primary_execution_lane",
+    "lane_health"
+  ],
+  "lane_health_states": [
+    "available",
+    "blocked",
+    "saturated"
+  ],
+  "lane_catalog": {
+    "cloud-first": {
+      "queue": "agent-cloud-queue",
+      "variant": "cloud-first",
+      "supported_workload_classes": [
+        "lightweight",
+        "standard",
+        "heavy",
+        "batch"
+      ],
+      "supported_hardware_affinity": [
+        "none"
+      ],
+      "supported_cost_postures": [
+        "minimize-cost",
+        "balanced",
+        "throughput-priority"
+      ],
+      "preconditions": [
+        "cloud-compliance-gate-pass",
+        "cloud-budget-class-available"
+      ]
+    },
+    "local-first-lenovo-p52": {
+      "queue": "agent-local-lenovo-queue",
+      "variant": "local-first",
+      "supported_workload_classes": [
+        "lightweight"
+      ],
+      "supported_hardware_affinity": [
+        "none",
+        "lenovo-p52"
+      ],
+      "supported_cost_postures": [
+        "minimize-cost",
+        "balanced"
+      ],
+      "preconditions": [
+        "lenovo-lane-available",
+        "low-concurrency-budget-available"
+      ]
+    },
+    "local-first-gigabyte": {
+      "queue": "agent-local-gigabyte-queue",
+      "variant": "local-first",
+      "supported_workload_classes": [
+        "lightweight",
+        "standard",
+        "heavy",
+        "batch"
+      ],
+      "supported_hardware_affinity": [
+        "none",
+        "lenovo-p52",
+        "gigabyte"
+      ],
+      "supported_cost_postures": [
+        "minimize-cost",
+        "balanced",
+        "throughput-priority"
+      ],
+      "preconditions": [
+        "gigabyte-lane-available",
+        "worker-pool-capacity-available"
+      ]
+    }
+  },
+  "selection_rules": [
+    {
+      "name": "cloud-first-default",
+      "match": {
+        "triage_label": "ready-for-agent",
+        "variant": "cloud-first"
+      },
+      "route_to": "cloud-first"
+    },
+    {
+      "name": "local-first-lenovo-constrained",
+      "match": {
+        "triage_label": "ready-for-agent",
+        "variant": "local-first",
+        "hardware_affinity": [
+          "lenovo-p52"
+        ],
+        "workload_class": [
+          "lightweight"
+        ]
+      },
+      "route_to": "local-first-lenovo-p52"
+    },
+    {
+      "name": "local-first-gigabyte-constrained",
+      "match": {
+        "triage_label": "ready-for-agent",
+        "variant": "local-first",
+        "hardware_affinity": [
+          "gigabyte"
+        ]
+      },
+      "route_to": "local-first-gigabyte"
+    },
+    {
+      "name": "local-first-cost-aware-lenovo",
+      "match": {
+        "triage_label": "ready-for-agent",
+        "variant": "local-first",
+        "workload_class": [
+          "lightweight"
+        ],
+        "hardware_affinity": [
+          "none"
+        ],
+        "cost_posture": [
+          "minimize-cost",
+          "balanced"
+        ]
+      },
+      "route_to": "local-first-lenovo-p52"
+    },
+    {
+      "name": "local-first-gigabyte-capacity",
+      "match": {
+        "triage_label": "ready-for-agent",
+        "variant": "local-first",
+        "any_of": [
+          {
+            "workload_class": [
+              "standard",
+              "heavy",
+              "batch"
+            ]
+          },
+          {
+            "cost_posture": [
+              "throughput-priority"
+            ]
+          }
+        ]
+      },
+      "route_to": "local-first-gigabyte"
+    }
+  ],
+  "fallback_rules": [
+    {
+      "from": "local-first-lenovo-p52",
+      "when_lane_health": "blocked",
+      "to": "local-first-gigabyte",
+      "reason": "Lenovo lane cannot safely execute the routed task."
+    },
+    {
+      "from": "local-first-lenovo-p52",
+      "when_lane_health": "saturated",
+      "to": "local-first-gigabyte",
+      "reason": "Lenovo lane runs with low concurrency and reroutes overflow."
+    },
+    {
+      "from": "local-first-gigabyte",
+      "when_lane_health": "blocked",
+      "when_hardware_affinity": [
+        "none"
+      ],
+      "to": "cloud-first",
+      "reason": "Gigabyte lane is unavailable and cloud-first can absorb eligible overflow."
+    },
+    {
+      "from": "local-first-gigabyte",
+      "when_lane_health": "blocked",
+      "when_hardware_affinity": [
+        "lenovo-p52",
+        "gigabyte"
+      ],
+      "to": "ready-for-human",
+      "reason": "Gigabyte lane is unavailable but the work is hardware-affine; manual checkpoint required."
+    },
+    {
+      "from": "local-first-gigabyte",
+      "when_lane_health": "saturated",
+      "when_hardware_affinity": [
+        "none"
+      ],
+      "to": "cloud-first",
+      "reason": "Gigabyte worker pool exceeded the declared threshold."
+    },
+    {
+      "from": "local-first-gigabyte",
+      "when_lane_health": "saturated",
+      "when_hardware_affinity": [
+        "lenovo-p52",
+        "gigabyte"
+      ],
+      "to": "ready-for-human",
+      "reason": "Gigabyte is saturated but the work is hardware-affine; manual checkpoint required."
+    },
+    {
+      "from": "cloud-first",
+      "when_lane_health": "blocked",
+      "to": "ready-for-human",
+      "reason": "Cloud routing is blocked by compliance or provider outage."
+    },
+    {
+      "from": "cloud-first",
+      "when_lane_health": "saturated",
+      "to": "ready-for-human",
+      "reason": "Cloud concurrency or budget limits require manual checkpointing."
+    }
+  ],
+  "manual_clarification_route": "ready-for-human"
+}

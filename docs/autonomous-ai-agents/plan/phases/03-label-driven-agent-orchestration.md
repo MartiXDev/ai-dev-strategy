@@ -29,16 +29,21 @@ Implement deterministic issue-to-agent execution with bounded retries.
 - Trigger cloud agents only after GDPR gate pass
 - Enforce per-agent budget class and request cap
 - Route high-risk tasks to stricter human review
+- Route any Cloud-first issue to the cloud lane unless the cloud lane is blocked
+  or saturated, then escalate to `ready-for-human`
 
 ### Local-first (Lenovo P52)
 
 - Restrict to lightweight execution classes
-- Queue heavy workloads for Gigabyte or cloud fallback
+- Prefer Lenovo for `minimize-cost` or `balanced` lightweight work
+- Reroute blocked or saturated Lenovo work to Gigabyte
 - Keep low concurrency for stable throughput
 
 ### Local-first (Gigabyte)
 
-- Enable broader local routing for heavy tasks
+- Enable broader local routing for standard, heavy, and batch tasks
+- Accept throughput-priority workloads and Lenovo overflow
+- Fall back to Cloud-first when Gigabyte is blocked or saturated
 - Use bounded parallel worker pools
 - Reserve high-capacity windows for batch backlogs
 

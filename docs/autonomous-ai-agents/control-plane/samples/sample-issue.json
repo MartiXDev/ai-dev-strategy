@@ -1,17 +1,17 @@
 {
-  "title": "Control Plane Skeleton: Issue Schema and Label Taxonomy",
-  "objective": "Define and document a canonical issue contract that supports deterministic routing.",
+  "title": "Pilot slice: Local-first lightweight documentation refresh",
+  "objective": "Route a lightweight Local-first maintenance task to the lowest-cost execution lane without manual interpretation.",
   "acceptance_criteria": [
-    "A canonical issue schema is defined and documented for this repository.",
-    "Label taxonomy maps to routing intent and triage transitions.",
-    "A sample issue validates against the schema and resolves to one routing target."
+    "The issue routes deterministically to the Lenovo lane.",
+    "Lane selection is derived from Local-first routing metadata.",
+    "Fallback remains available if the Lenovo lane is blocked or saturated."
   ],
   "test_intent": {
-    "strategy": "mixed",
+    "strategy": "integration",
     "focus": [
-      "Schema validation succeeds for required fields.",
-      "Routing target derives from triage label and execution lane.",
-      "Only canonical triage labels are accepted."
+      "Schema validation succeeds for Local-first routing metadata.",
+      "Primary execution lane resolves to local-first-lenovo-p52.",
+      "Fallback policy can reroute the issue when Lenovo capacity is unavailable."
     ]
   },
   "data_sensitivity": "internal",
@@ -32,9 +32,14 @@
     "blocks": [],
     "external_dependencies": []
   },
-  "primary_execution_lane": "cloud-first",
+  "variant": "local-first",
+  "routing_profile": {
+    "workload_class": "lightweight",
+    "hardware_affinity": "lenovo-p52",
+    "cost_posture": "minimize-cost"
+  },
+  "primary_execution_lane": "local-first-lenovo-p52",
   "triage_labels": [
     "ready-for-agent"
-  ],
-  "variant": "cloud-first"
+  ]
 }
